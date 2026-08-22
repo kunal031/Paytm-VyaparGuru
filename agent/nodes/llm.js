@@ -39,11 +39,13 @@ async function sarvamComplete({ system, user, maxTokens }) {
   };
 
   // sarvam-105b reasons before answering, and the reasoning eats the token
-  // budget — pad generously, and if reasoning overflowed (empty content),
-  // retry once with a much larger budget.
-  let content = await call(Math.max(maxTokens + 2000, 3000));
-  if (!content) {
-    content = await call(8000);
+  // budget — pad generously but clamp to the API's hard cap (4096 on the
+  // starter tier). If reasoning overflowed (empty content), retry at the cap.
+  const CAP = 4096;
+  const first = Math.min(Math.max(maxTokens + 2000, 3000), CAP);
+  let content = await call(first);
+  if (!content && first < CAP) {
+    content = await call(CAP);
   }
   return content;
 }

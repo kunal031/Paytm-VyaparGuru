@@ -50,5 +50,39 @@ export const login = asyncHandler(async (req, res) => {
 });
 
 export const me = asyncHandler(async (req, res) => {
-  ok(res, { merchant: req.merchant.toSafeJSON() });
+  ok(res, { merchant: req.merchant.toSafeJSON(), account: req.authUser.toSafeJSON() });
+});
+
+// ---------------- Team management (owner-only, see routes) ----------------
+
+export const createStaff = asyncHandler(async (req, res) => {
+  const { name, email, password } = req.body;
+  const existing = await Merchant.findOne({ email: email.toLowerCase() });
+  if (existing) throw ApiError.conflict('An account with this email already exists');
+
+  const passwordHash = await bcrypt.hash(password, BCRYPT_SALT_ROUNDS);
+  const staff = await Merchant.create({
+    businessName: req.merchant.businessName,
+    ownerName: name,
+    // staff log in by email; phone is unique so derive a placeholder
+    phone: `staff-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+    email,
+    passwordHash,
+    businessType: req.merchant.businessType,
+    location: req.merchant.location,
+    role: 'staff',
+    staffOf: req.merchant._id,
+  });
+  ok(res, { staff: staff.toSafeJSON() }, 201);
+});
+
+export const listStaff = asyncHandler(async (req, res) => {
+  const staff = await Merchant.find({ staffOf: req.merchant._id }).select('ownerName email createdAt');
+  ok(res, { staff });
+});
+
+export const removeStaff = asyncHandler(async (req, res) => {
+  const removed = await Merchant.findOneAndDelete({ _id: req.params.id, staffOf: req.merchant._id });
+  if (!removed) throw ApiError.badRequest('No such staff account in your team');
+  ok(res, { removed: removed._id });
 });

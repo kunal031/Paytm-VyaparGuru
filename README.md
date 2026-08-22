@@ -127,6 +127,13 @@ The 🔌 Integrations tab connects VyaparGuru to the other tools Indian SMBs alr
 
 How it works: every one of these apps exports CSV/Excel. Upload that export and the importer auto-detects the columns — provider-specific header maps first (KhataBook's *You Got / You Gave*, Tally's voucher types, Zoho's invoice columns…), fuzzy generic detection as fallback. Credits become `Transaction`s (`source: <provider>`), debits become `Expense`s, product catalogs upsert `SKU`s — so imported data immediately feeds Cash Flow, Inventory and the Copilot with zero extra plumbing. Handles ₹/comma amounts, multiple date formats, quoted CSV fields; unreadable rows are skipped and counted. Each provider also has a one-click **sample import** (clearly-labeled synthetic data in that provider's export format) so the whole connect → import → view flow is demoable. Live API/OAuth sync is the roadmap; file import works today.
 
+## Multilingual, authorization & the voice assistant
+
+- **🌐 Universal language switcher** (header): the whole UI switches between 11 Indian languages — English, हिन्दी, বাংলা, తెలుగు, मराठी, தமிழ், ગુજરાતી, ಕನ್ನಡ, മലയാളം, ਪੰਜਾਬੀ, ଓଡ଼ିଆ. The client sends its string catalog to `/api/v1/i18n`; the server translates it via the LLM once per language and caches it (localStorage on the client too). The Copilot and voice assistant answer in the selected language.
+- **ⓘ card tooltips**: hover any card title's ⓘ to see what that card shows, in the selected language.
+- **Authorization (RBAC)**: owners can create **staff** logins (👥 Team). Staff share the owner's business data but are blocked from team management and integrations management (`requireRole('owner')` guards).
+- **🎙️ Voice assistant on every screen**: floating assistant that listens (Saarika/Whisper STT), answers about the merchant's data *or the app itself* (new `app_help` intent backed by an app guide), and speaks replies with browser TTS in the selected language.
+
 ## Demo script — the Ramesh story (~3 minutes)
 
 The seeded kirana merchant is built to tell a story. Log in as `ramesh@sharmastore.in` / `Paytm@123`:

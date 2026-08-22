@@ -20,6 +20,14 @@ export const signupSchema = z.object({
   }),
 });
 
+export const staffSchema = z.object({
+  body: z.object({
+    name: z.string().min(2).max(120),
+    email: z.string().email(),
+    password: z.string().min(8, 'Password must be at least 8 characters').max(128),
+  }),
+});
+
 export const loginSchema = z.object({
   body: z.object({
     // Login with either email or phone

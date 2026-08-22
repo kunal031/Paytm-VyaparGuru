@@ -6,6 +6,7 @@ export const INTENTS = [
   'top_products',
   'worst_products',
   'new_products',
+  'app_help',
   'sales_drop_diagnosis',
   'stockout_history',
   'discount_impact',
@@ -16,6 +17,7 @@ export const INTENTS = [
 // Latin + Devanagari + Telugu keywords so the no-LLM fallback still routes
 // common Hindi/Telugu phrasings correctly.
 const KEYWORD_RULES = [
+  { intent: 'app_help', patterns: [/how (do|to|can) i|how does (this|the) app|what (is|does) (this|vyaparguru)|what can you do|where (do|can) i|help me use|guide|tutorial|kaise (kare|use|chalaye)|app (kaise|me)/i, /कैसे करें|कैसे इस्तेमाल|मदद/] },
   { intent: 'new_products', patterns: [/new (product|item|sku|stock)|recently added|added recently|what('| i)?s new|naya (saman|product)/i, /नया|नई|नए/, /కొత్త/] },
   { intent: 'worst_products', patterns: [/worst|lowest|least sold|slowest|not selling|isn'?t selling|nahi bik|kam bik|bottom/i, /नहीं बिक|सबसे कम बिक/, /అమ్మని|తక్కువ అమ్మ/] },
   { intent: 'sales_drop_diagnosis', patterns: [/why.*(drop|fall|fell|down|kam|slow)/i, /(drop|fell|down|decrease|gir)/i, /कम|घट|गिर/, /తగ్గ/] },

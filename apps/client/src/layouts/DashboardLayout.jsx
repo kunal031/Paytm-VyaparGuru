@@ -1,23 +1,28 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore.js';
 import ErrorBoundary from '../components/common/ErrorBoundary.jsx';
+import LanguagePicker from '../components/common/LanguagePicker.jsx';
+import FloatingAssistant from '../components/common/FloatingAssistant.jsx';
+import { useI18n } from '../i18n/LanguageContext.jsx';
 
-const navItems = [
-  { to: '/dashboard', label: 'Home', icon: '🏠' },
-  { to: '/cashflow', label: 'Cash Flow', icon: '💰' },
-  { to: '/inventory', label: 'Inventory', icon: '📦' },
-  { to: '/sales', label: 'Copilot', icon: '💬' },
-  { to: '/integrations', label: 'Integrations', icon: '🔌' },
+const NAV_ITEMS = [
+  { to: '/dashboard', key: 'nav.home', icon: '🏠' },
+  { to: '/cashflow', key: 'nav.cashflow', icon: '💰' },
+  { to: '/inventory', key: 'nav.inventory', icon: '📦' },
+  { to: '/sales', key: 'nav.copilot', icon: '💬' },
+  { to: '/integrations', key: 'nav.integrations', icon: '🔌' },
+  { to: '/team', key: 'nav.team', icon: '👥' },
 ];
 
 function NavItems({ vertical = false }) {
-  return navItems.map((item) => (
+  const { t } = useI18n();
+  return NAV_ITEMS.map((item) => (
     <NavLink
       key={item.to}
       to={item.to}
       className={({ isActive }) =>
         `flex items-center gap-3 rounded-lg text-sm font-medium transition-colors ${
-          vertical ? 'px-4 py-2.5' : 'flex-1 flex-col gap-0.5 py-2 text-xs'
+          vertical ? 'px-4 py-2.5' : 'flex-1 flex-col gap-0.5 py-2 text-[10px]'
         } ${
           isActive
             ? 'bg-brand-sky text-brand-navy'
@@ -26,7 +31,7 @@ function NavItems({ vertical = false }) {
       }
     >
       <span aria-hidden>{item.icon}</span>
-      <span>{item.label}</span>
+      <span>{t(item.key)}</span>
     </NavLink>
   ));
 }
@@ -35,6 +40,7 @@ export default function DashboardLayout() {
   const merchant = useAuthStore((s) => s.merchant);
   const logout = useAuthStore((s) => s.logout);
   const navigate = useNavigate();
+  const { t } = useI18n();
 
   const handleLogout = () => {
     logout();
@@ -52,12 +58,15 @@ export default function DashboardLayout() {
             <p className="hidden text-xs text-slate-500 sm:block">{merchant?.businessName}</p>
           </div>
         </div>
-        <button
-          onClick={handleLogout}
-          className="rounded-lg px-3 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-100"
-        >
-          Logout
-        </button>
+        <div className="flex items-center gap-1">
+          <LanguagePicker />
+          <button
+            onClick={handleLogout}
+            className="rounded-lg px-3 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-100"
+          >
+            {t('nav.logout')}
+          </button>
+        </div>
       </header>
 
       <div className="flex">
@@ -73,6 +82,9 @@ export default function DashboardLayout() {
           </ErrorBoundary>
         </main>
       </div>
+
+      {/* Voice assistant — every screen */}
+      <FloatingAssistant />
 
       {/* Bottom nav — mobile only */}
       <nav className="fixed inset-x-0 bottom-0 z-20 flex border-t border-slate-200 bg-white px-2 py-1 md:hidden">

@@ -4,6 +4,7 @@ import { useAuthStore } from '../store/authStore.js';
 import { useDashboardSummary } from '../features/dashboard/dashboardApi.js';
 import Card from '../components/common/Card.jsx';
 import { formatPaise } from '../utils/format.js';
+import { useI18n } from '../i18n/LanguageContext.jsx';
 
 const ASK_SUGGESTIONS = [
   'How were my sales this week?',
@@ -42,6 +43,7 @@ function Delta({ pct }) {
 export default function DashboardHomePage() {
   const merchant = useAuthStore((s) => s.merchant);
   const navigate = useNavigate();
+  const { t } = useI18n();
   const { data, isLoading, isError, error, refetch } = useDashboardSummary();
 
   const askCopilot = (question) => navigate('/sales', { state: { question } });
@@ -74,8 +76,11 @@ export default function DashboardHomePage() {
           {/* Needs attention */}
           {(data.inventory?.urgent?.length > 0 || data.inventory?.dead > 0) && (
             <div className="space-y-2">
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-                Needs attention
+              <h3
+                title={t('info.needsAttention')}
+                className="cursor-help text-sm font-semibold uppercase tracking-wide text-slate-500"
+              >
+                {t('dash.needsAttention')}
               </h3>
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 {data.inventory.urgent.map((u) => (
@@ -112,44 +117,44 @@ export default function DashboardHomePage() {
 
           {/* Stat row */}
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <Card title="Today">
+            <Card title={t('dash.today')} info={t('info.today')}>
               <p className="text-2xl font-bold text-brand-navy">
                 {data.today ? formatPaise(data.today.revenue, { compact: true }) : '—'}
               </p>
-              <p className="text-xs text-slate-500">{data.today?.transactions ?? 0} transactions</p>
+              <p className="text-xs text-slate-500">
+                {data.today?.transactions ?? 0} {t('dash.transactions')}
+              </p>
             </Card>
-            <Card title="This Week">
+            <Card title={t('dash.thisWeek')} info={t('info.thisWeek')}>
               <p className="text-2xl font-bold text-brand-navy">
                 {data.week ? formatPaise(data.week.revenue, { compact: true }) : '—'}
                 {data.week && <Delta pct={data.week.revenueChangePct} />}
               </p>
               <p className="text-xs text-slate-500">
-                vs {data.week ? formatPaise(data.week.lastWeekRevenue, { compact: true }) : '—'} last week
+                vs {data.week ? formatPaise(data.week.lastWeekRevenue, { compact: true }) : '—'} {t('dash.vsLastWeek')}
               </p>
             </Card>
-            <Card title="Next 30 Days (forecast)">
+            <Card title={t('dash.forecast')} info={t('info.forecast')}>
               <p className="text-2xl font-bold text-brand-navy">
                 {data.forecast ? formatPaise(data.forecast.projectedNet, { compact: true }) : '—'}
               </p>
               <p className="text-xs text-slate-500">
-                {data.forecast?.nextFestival
-                  ? `🎉 ${data.forecast.nextFestival.name} coming up`
-                  : 'projected net cash flow'}
+                {data.forecast?.nextFestival ? `🎉 ${data.forecast.nextFestival.name}` : ''}
               </p>
             </Card>
-            <Card title="Hidden Charges">
+            <Card title={t('dash.hiddenCharges')} info={t('info.hiddenCharges')}>
               <p className="text-2xl font-bold text-brand-navy">
                 {data.hiddenCharges ? formatPaise(data.hiddenCharges.estimatedMonthlyCost, { compact: true }) : '—'}
               </p>
               <p className="text-xs text-slate-500">
-                {data.hiddenCharges?.count ?? 0} recurring charge{data.hiddenCharges?.count === 1 ? '' : 's'}/month
+                {data.hiddenCharges?.count ?? 0}/month
               </p>
             </Card>
           </div>
 
           {/* Sparkline */}
           {data.sparkline.length > 0 && (
-            <Card title="Revenue — last 30 days">
+            <Card title={t('dash.revenue30')} info={t('info.revenue30')}>
               <div className="h-36">
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={data.sparkline} margin={{ top: 4, right: 4, bottom: 0, left: 4 }}>
@@ -171,14 +176,14 @@ export default function DashboardHomePage() {
               <div className="mt-2 flex flex-wrap gap-x-6 gap-y-1 text-xs text-slate-500">
                 {data.topSeller && (
                   <span>
-                    🏆 Best seller: <b className="text-slate-700">{data.topSeller.name}</b> (
+                    🏆 {t('dash.bestSeller')}: <b className="text-slate-700">{data.topSeller.name}</b> (
                     {formatPaise(data.topSeller.revenue, { compact: true })})
                   </span>
                 )}
                 {data.worstSeller && (
                   <span>
-                    🐌 Weakest: <b className="text-slate-700">{data.worstSeller.name}</b> (
-                    {data.worstSeller.units} units)
+                    🐌 {t('dash.weakest')}: <b className="text-slate-700">{data.worstSeller.name}</b> (
+                    {data.worstSeller.units})
                   </span>
                 )}
               </div>
@@ -186,7 +191,7 @@ export default function DashboardHomePage() {
           )}
 
           {/* Ask copilot */}
-          <Card title="Ask VyaparGuru">
+          <Card title={t('dash.ask')}>
             <div className="flex flex-wrap gap-2">
               {ASK_SUGGESTIONS.map((q) => (
                 <button
@@ -201,7 +206,7 @@ export default function DashboardHomePage() {
                 onClick={() => navigate('/sales')}
                 className="rounded-full bg-brand-navy px-3 py-1.5 text-sm font-semibold text-white hover:opacity-90"
               >
-                Open Copilot →
+                {t('dash.openCopilot')}
               </button>
             </div>
           </Card>
@@ -209,13 +214,11 @@ export default function DashboardHomePage() {
           {/* Module shortcuts */}
           <div className="grid gap-3 sm:grid-cols-2">
             <Link to="/cashflow" className="rounded-xl border border-slate-200 bg-white p-4 transition hover:border-brand-blue">
-              <p className="font-semibold text-brand-navy">💰 Cash Flow Clarity</p>
-              <p className="mt-1 text-xs text-slate-500">
-                Daily net cash, expense breakdown, hidden charges and the 30-day forecast.
-              </p>
+              <p className="font-semibold text-brand-navy">{t('dash.cashflowCard')}</p>
+              <p className="mt-1 text-xs text-slate-500">{t('dash.cashflowCardDesc')}</p>
             </Link>
             <Link to="/inventory" className="rounded-xl border border-slate-200 bg-white p-4 transition hover:border-brand-blue">
-              <p className="font-semibold text-brand-navy">📦 Inventory Intelligence</p>
+              <p className="font-semibold text-brand-navy">{t('dash.inventoryCard')}</p>
               <p className="mt-1 text-xs text-slate-500">
                 {data.inventory
                   ? `${data.inventory.fast} fast · ${data.inventory.slow} slow · ${data.inventory.dead} dead — ${data.inventory.stockoutAlerts} stockout alert${data.inventory.stockoutAlerts === 1 ? '' : 's'}`

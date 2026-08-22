@@ -1,11 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useAskCopilot, useAskCopilotVoice } from '../../features/sales/salesApi.js';
-
-const LANGUAGES = [
-  { id: 'en', label: 'English', tts: 'en-IN' },
-  { id: 'hi', label: 'हिन्दी', tts: 'hi-IN' },
-  { id: 'te', label: 'తెలుగు', tts: 'te-IN' },
-];
+import { useI18n } from '../../i18n/LanguageContext.jsx';
 
 const SUGGESTIONS = [
   'How were my sales this week?',
@@ -48,7 +43,8 @@ export default function ChatWidget({ initialQuestion = null }) {
     },
   ]);
   const [input, setInput] = useState('');
-  const [language, setLanguage] = useState('en');
+  // Language follows the app-wide 🌐 switcher
+  const { lang: language, language: languageMeta } = useI18n();
   const [speak, setSpeak] = useState(false);
   const [recording, setRecording] = useState(false);
   const listRef = useRef(null);
@@ -77,7 +73,7 @@ export default function ChatWidget({ initialQuestion = null }) {
   const speakAnswer = (text) => {
     if (!speak || !window.speechSynthesis) return;
     const utterance = new SpeechSynthesisUtterance(text.replace(/₹/g, ' rupees '));
-    utterance.lang = LANGUAGES.find((l) => l.id === language)?.tts || 'en-IN';
+    utterance.lang = languageMeta.tts || 'en-IN';
     window.speechSynthesis.cancel();
     window.speechSynthesis.speak(utterance);
   };
@@ -158,19 +154,9 @@ export default function ChatWidget({ initialQuestion = null }) {
     <div className="flex h-[calc(100vh-220px)] min-h-[420px] flex-col rounded-xl border border-slate-200 bg-slate-50">
       {/* Toolbar */}
       <div className="flex items-center justify-between gap-2 border-b border-slate-200 bg-white px-4 py-2.5 rounded-t-xl">
-        <div className="flex gap-1">
-          {LANGUAGES.map((l) => (
-            <button
-              key={l.id}
-              onClick={() => setLanguage(l.id)}
-              className={`rounded-lg px-2.5 py-1 text-xs font-semibold ${
-                language === l.id ? 'bg-brand-navy text-white' : 'bg-slate-100 text-slate-600'
-              }`}
-            >
-              {l.label}
-            </button>
-          ))}
-        </div>
+        <p className="text-xs font-semibold text-slate-500">
+          🌐 {languageMeta.native} <span className="font-normal text-slate-400">(header 🌐 changes it)</span>
+        </p>
         <button
           onClick={() => setSpeak((s) => !s)}
           title="Read answers aloud"
@@ -226,13 +212,7 @@ export default function ChatWidget({ initialQuestion = null }) {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && send()}
-          placeholder={
-            language === 'hi'
-              ? 'अपने बिज़नेस के बारे में पूछें…'
-              : language === 'te'
-                ? 'మీ వ్యాపారం గురించి అడగండి…'
-                : 'Ask about your business…'
-          }
+          placeholder="Ask about your business…"
           disabled={busy || recording}
           className="min-w-0 flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-blue focus:outline-none"
         />

@@ -1,5 +1,5 @@
 import { hasLlm, complete } from './llm.js';
-import { SYNTHESIS_SYSTEM_PROMPT } from '../prompts/prompts.js';
+import { SYNTHESIS_SYSTEM_PROMPT, APP_GUIDE } from '../prompts/prompts.js';
 
 const inr = (paise) => {
   const r = paise / 100;
@@ -87,6 +87,17 @@ function templateAnswer(state) {
       );
       return `Products you added recently:\n${lines.join('\n')}`;
     }
+    case 'app_help':
+      return (
+        'VyaparGuru turns your Paytm transactions into insights:\n' +
+        '• Home — today/week revenue, forecast, urgent stock alerts\n' +
+        '• Cash Flow — profit charts, hidden charges, 30-day forecast\n' +
+        '• Inventory — fast/slow/dead stock, stockout predictions; add stock by photo, voice or typing\n' +
+        '• Copilot — ask business questions in 11 Indian languages\n' +
+        '• Integrations — import data from KhataBook, Zoho, Tally, Shopify & more\n' +
+        '• Team — owners can add staff logins\n' +
+        'Use the 🌐 button to change the app language, and this 🎙️ assistant from any screen.'
+      );
     case 'stockout_history': {
       if (!a.stockoutSummary?.length) return 'Good news — no stockout gaps detected in the last 90 days.';
       const lines = a.stockoutSummary
@@ -129,7 +140,19 @@ function templateAnswer(state) {
   }
 }
 
-const LANGUAGE_NAMES = { en: 'English', hi: 'Hindi', te: 'Telugu' };
+const LANGUAGE_NAMES = {
+  en: 'English',
+  hi: 'Hindi',
+  bn: 'Bengali',
+  te: 'Telugu',
+  mr: 'Marathi',
+  ta: 'Tamil',
+  gu: 'Gujarati',
+  kn: 'Kannada',
+  ml: 'Malayalam',
+  pa: 'Punjabi',
+  or: 'Odia',
+};
 
 /**
  * Node: turn retrieved data + analysis into a merchant-friendly answer,
@@ -145,6 +168,9 @@ export async function synthesizeResponse(state) {
           question: state.question,
           intent: state.intent,
           responseLanguage: LANGUAGE_NAMES[state.language] || 'English',
+          ...(state.intent === 'app_help' || state.intent === 'general'
+            ? { appGuide: APP_GUIDE }
+            : {}),
           retrieved: formatMoneyDeep(state.retrieved, null),
           analysis: formatMoneyDeep(state.analysis, null),
         }),

@@ -5,6 +5,7 @@ import ImportModal from '../components/integrations/ImportModal.jsx';
 import ViewDataModal from '../components/integrations/ViewDataModal.jsx';
 import { useIntegrations, useConnectIntegration } from '../features/integrations/integrationsApi.js';
 import { formatDate } from '../utils/format.js';
+import { useI18n } from '../i18n/LanguageContext.jsx';
 
 function ProviderCard({ p, onImport, onView, onToggle, toggling }) {
   const connected = p.status === 'connected';
@@ -65,6 +66,7 @@ function ProviderCard({ p, onImport, onView, onToggle, toggling }) {
 }
 
 export default function IntegrationsPage() {
+  const { t } = useI18n();
   const { data, isLoading, isError, error } = useIntegrations();
   const connectMutation = useConnectIntegration();
   const [importing, setImporting] = useState(null);
@@ -89,11 +91,8 @@ export default function IntegrationsPage() {
   return (
     <div className="space-y-5">
       <div>
-        <h2 className="text-xl font-bold text-slate-900 sm:text-2xl">Integrations</h2>
-        <p className="mt-1 text-sm text-slate-500">
-          Bring in data from the other apps you run your business on — khata ledgers, accounting,
-          online stores, POS. Imported records flow straight into Cash Flow, Inventory and the Copilot.
-        </p>
+        <h2 className="text-xl font-bold text-slate-900 sm:text-2xl">{t('integrations.title')}</h2>
+        <p className="mt-1 text-sm text-slate-500">{t('integrations.subtitle')}</p>
       </div>
 
       {isLoading && <Loader label="Loading integrations…" />}

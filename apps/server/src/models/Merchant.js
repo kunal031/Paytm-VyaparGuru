@@ -9,6 +9,10 @@ const merchantSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     passwordHash: { type: String, required: true, select: false },
     businessType: { type: String, enum: BUSINESS_TYPES, required: true },
+    // Authorization: owners manage the business; staff accounts (created by an
+    // owner) share the owner's business data with restricted permissions
+    role: { type: String, enum: ['owner', 'staff'], default: 'owner' },
+    staffOf: { type: mongoose.Schema.Types.ObjectId, ref: 'Merchant', default: null },
     location: {
       city: { type: String, trim: true },
       state: { type: String, trim: true },

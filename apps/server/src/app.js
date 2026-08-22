@@ -12,6 +12,7 @@ import cashflowRoutes from './routes/cashflow.routes.js';
 import salesRoutes from './routes/sales.routes.js';
 import dashboardRoutes from './routes/dashboard.routes.js';
 import integrationsRoutes from './routes/integrations.routes.js';
+import i18nRoutes from './routes/i18n.routes.js';
 
 export function createApp() {
   const app = express();
@@ -31,6 +32,7 @@ export function createApp() {
   app.use('/api/v1/sales', salesRoutes);
   app.use('/api/v1/dashboard', dashboardRoutes);
   app.use('/api/v1/integrations', integrationsRoutes);
+  app.use('/api/v1/i18n', i18nRoutes);
 
   app.use(notFoundHandler);
   app.use(errorHandler);

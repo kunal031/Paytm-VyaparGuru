@@ -18,6 +18,6 @@ export const daysQuerySchema = z.object({
 export const askSchema = z.object({
   body: z.object({
     question: z.string().min(1).max(1000),
-    language: z.enum(['en', 'hi', 'te']).optional(),
+    language: z.enum(['en', 'hi', 'bn', 'te', 'mr', 'ta', 'gu', 'kn', 'ml', 'pa', 'or']).optional(),
   }),
 });

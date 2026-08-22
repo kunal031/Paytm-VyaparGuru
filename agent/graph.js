@@ -47,8 +47,9 @@ const timed = (name, fn) => async (state) => {
 const GREETING_RE = /^\s*(hi|hii+|hello|hey|namaste|namaskar|good (morning|evening|afternoon))[\s!.]*$/i;
 
 function routeAfterIntent(state) {
-  // Only pure greetings skip retrieval; every other "general" question still
-  // gets a data snapshot so the answer is grounded in real numbers.
+  // App-help questions and pure greetings need no data retrieval; every other
+  // question still gets a data snapshot so the answer is grounded in real numbers.
+  if (state.intent === 'app_help') return 'synthesize';
   return state.intent === 'general' && GREETING_RE.test(state.question || '')
     ? 'synthesize'
     : 'retrieve';

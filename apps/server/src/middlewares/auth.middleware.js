@@ -16,9 +16,27 @@ export const requireAuth = asyncHandler(async (req, _res, next) => {
     throw ApiError.unauthorized('Invalid or expired token');
   }
 
-  const merchant = await Merchant.findById(payload.sub);
-  if (!merchant) throw ApiError.unauthorized('Merchant no longer exists');
+  const account = await Merchant.findById(payload.sub);
+  if (!account) throw ApiError.unauthorized('Merchant no longer exists');
 
-  req.merchant = merchant;
+  // Authorization model: staff accounts operate on their owner's business data.
+  // req.merchant is always the BUSINESS (data scope); req.authUser is who is
+  // actually logged in (carries the role).
+  req.authUser = account;
+  if (account.role === 'staff' && account.staffOf) {
+    const owner = await Merchant.findById(account.staffOf);
+    if (!owner) throw ApiError.unauthorized('This staff account is orphaned — the business no longer exists');
+    req.merchant = owner;
+  } else {
+    req.merchant = account;
+  }
   next();
 });
+
+/** Route guard: only the given role may pass (use after requireAuth). */
+export const requireRole = (role) => (req, _res, next) => {
+  if ((req.authUser?.role ?? 'owner') !== role) {
+    throw ApiError.forbidden(`Only the ${role} can perform this action`);
+  }
+  next();
+};
