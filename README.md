@@ -114,4 +114,16 @@ Free-tier note: services sleep after idle — the first request after a while ta
 - [x] **Phase 2** — Cash Flow Clarity: daily revenue/profit/expense endpoints, SARIMAX forecast with festival regressors (+ local JS fallback when the ML service is down), hidden-expense detection, responsive dashboard
 - [x] **Phase 3** — Inventory Intelligence: photo/voice stock onboarding (Claude vision + Whisper, with labeled demo fallback when API keys are absent), fast/slow/dead classification (KMeans + rules, JS fallback), festival-aware stockout prediction & reorder suggestions, probabilistic amount→SKU attribution
 - [x] **Phase 4** — Sales & Growth Copilot: LangGraph (JS) agent — translate → intent classification → tool-based data retrieval → code-only analysis → synthesis → translate back. Tools: getSalesByPeriod, getTopSKUs, getStockoutHistory, getDiscountImpact (+ inventory/forecast). Never fabricates numbers. Chat widget with voice input (Whisper), English/हिन्दी/తెలుగు selector, browser TTS. Runs without API keys via rule-based intents + template answers.
-- [ ] **Phase 5** — Unified dashboard, hero demo merchant, polish
+- [x] **Phase 5** — Unified command-center dashboard (`/dashboard/summary` composes all three engines via `Promise.allSettled` — one failing engine degrades its card, never the page): today/week revenue with WoW delta, 30-day forecast + next festival, hidden-charges monthly cost, urgent stockout & dead-stock "needs attention" cards, 30-day revenue sparkline, best/worst seller, one-tap questions that deep-link into the Copilot. Error boundary around every page; skeleton loading states.
+
+## Demo script — the Ramesh story (~3 minutes)
+
+The seeded kirana merchant is built to tell a story. Log in as `ramesh@sharmastore.in` / `Paytm@123`:
+
+1. **Home** — the dashboard opens on "Needs attention": items days from stockout (with festival-aware reorder quantities) and dead stock locking up cash. This week's revenue is visibly down vs last week.
+2. **Ask why** — tap *"Why did my sales drop?"*. The Copilot answers from real transaction data: the dip lines up with multi-day stockouts of fast movers (Parle-G, Thums Up), with an estimated ₹ figure for the missed sales.
+3. **Inventory** — the same stockouts appear as red alert cards with reorder suggestions; the fast/slow/dead table shows exactly which products earn and which just sit.
+4. **Cash Flow** — the 30-day SARIMAX forecast shows festival demand spikes coming (calendar-aware), plus the recurring "hidden" charges quietly draining the account each month.
+5. **Add stock by voice** — Inventory → Add Stock → 🎙️: say *"Aaj 20 packet Parle-G aaye, 30 rupaye wale"* — Saarika STT + the LLM turn it into an editable SKU row. Switch the Copilot to हिन्दी and ask the same questions in Hindi.
+
+One number to land the pitch: the copilot's stockout answer — *"you lost ~₹5,899 to stockouts this month"* — is computed, not generated.

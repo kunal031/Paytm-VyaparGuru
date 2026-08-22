@@ -10,6 +10,7 @@ import authRoutes from './routes/auth.routes.js';
 import inventoryRoutes from './routes/inventory.routes.js';
 import cashflowRoutes from './routes/cashflow.routes.js';
 import salesRoutes from './routes/sales.routes.js';
+import dashboardRoutes from './routes/dashboard.routes.js';
 
 export function createApp() {
   const app = express();
@@ -27,6 +28,7 @@ export function createApp() {
   app.use('/api/v1/inventory', inventoryRoutes);
   app.use('/api/v1/cashflow', cashflowRoutes);
   app.use('/api/v1/sales', salesRoutes);
+  app.use('/api/v1/dashboard', dashboardRoutes);
 
   app.use(notFoundHandler);
   app.use(errorHandler);

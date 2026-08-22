@@ -40,7 +40,7 @@ function Bubble({ message }) {
   );
 }
 
-export default function ChatWidget() {
+export default function ChatWidget({ initialQuestion = null }) {
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
@@ -62,6 +62,17 @@ export default function ChatWidget() {
   useEffect(() => {
     listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: 'smooth' });
   }, [messages, busy]);
+
+  // Auto-send a question handed over from the dashboard. Deferred via a
+  // cancellable timeout so StrictMode's dev remount cancels the first pass and
+  // only the stable mount fires the mutation (mutating directly inside the
+  // first effect pass leaves the request orphaned by the simulated remount).
+  useEffect(() => {
+    if (!initialQuestion) return undefined;
+    const t = setTimeout(() => send(initialQuestion), 0);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialQuestion]);
 
   const speakAnswer = (text) => {
     if (!speak || !window.speechSynthesis) return;

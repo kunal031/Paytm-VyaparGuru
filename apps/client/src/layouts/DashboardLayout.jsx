@@ -1,5 +1,6 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore.js';
+import ErrorBoundary from '../components/common/ErrorBoundary.jsx';
 
 const navItems = [
   { to: '/dashboard', label: 'Home', icon: '🏠' },
@@ -66,7 +67,9 @@ export default function DashboardLayout() {
 
         {/* Main content */}
         <main className="min-w-0 flex-1 p-4 pb-20 sm:p-6 md:pb-6">
-          <Outlet />
+          <ErrorBoundary>
+            <Outlet />
+          </ErrorBoundary>
         </main>
       </div>
 
