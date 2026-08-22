@@ -16,27 +16,36 @@ export const hasLlm = () =>
   Boolean(process.env.SARVAM_API_KEY || process.env.ANTHROPIC_API_KEY);
 
 async function sarvamComplete({ system, user, maxTokens }) {
-  const { data } = await axios.post(
-    SARVAM_URL,
-    {
-      model: SARVAM_MODEL,
-      messages: [
-        { role: 'system', content: system },
-        { role: 'user', content: user },
-      ],
-      // sarvam-105b spends ~500 tokens reasoning before the answer — pad the
-      // budget so short answers (e.g. an intent id) never truncate
-      max_tokens: Math.max(maxTokens + 1000, 1500),
-      temperature: 0.2,
-    },
-    {
-      headers: { Authorization: `Bearer ${process.env.SARVAM_API_KEY}` },
-      timeout: 90_000,
-    }
-  );
-  const content = data.choices?.[0]?.message?.content ?? '';
-  // Strip any inline think tags defensively
-  return content.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
+  const call = async (budget) => {
+    const { data } = await axios.post(
+      SARVAM_URL,
+      {
+        model: SARVAM_MODEL,
+        messages: [
+          { role: 'system', content: system },
+          { role: 'user', content: user },
+        ],
+        max_tokens: budget,
+        temperature: 0.2,
+      },
+      {
+        headers: { Authorization: `Bearer ${process.env.SARVAM_API_KEY}` },
+        timeout: 90_000,
+      }
+    );
+    const content = data.choices?.[0]?.message?.content ?? '';
+    // Strip any inline think tags defensively
+    return content.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
+  };
+
+  // sarvam-105b reasons before answering, and the reasoning eats the token
+  // budget — pad generously, and if reasoning overflowed (empty content),
+  // retry once with a much larger budget.
+  let content = await call(Math.max(maxTokens + 2000, 3000));
+  if (!content) {
+    content = await call(8000);
+  }
+  return content;
 }
 
 let _anthropic = null;

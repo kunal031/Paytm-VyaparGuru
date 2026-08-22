@@ -107,13 +107,15 @@ export async function parseStockPhoto(imageBuffer, mimeType) {
   };
 }
 
-const STRUCTURE_SYSTEM_PROMPT = `You convert an Indian merchant's spoken stock description (may mix Hindi/English) into JSON.
+const STRUCTURE_SYSTEM_PROMPT = `You convert an Indian merchant's spoken stock description (may mix Hindi/English/regional languages, and may contain speech-recognition errors) into JSON.
 Example input: "Aaj 20 packet Parle-G aaye 30 rupaye wale, aur 12 bottle Thums Up 45 ka"
 Rules:
 - Respond with ONLY a JSON array, no prose, no markdown fences.
 - Each element: {"name": string, "category": string, "priceINR": number|null, "quantity": number|null, "unit": string}
+- Product names are often misheard (e.g. "parlay g" = Parle-G, "tums up" = Thums Up, "magi" = Maggi) — correct them to the closest common Indian brand/product name.
 - Translate product names to their common English brand form.
-- If nothing product-like is mentioned, return [].`;
+- Be generous: if something plausibly names a product, include it (the merchant reviews before saving).
+- If nothing product-like is mentioned at all, return [].`;
 
 /** Structures a voice transcript into SKU drafts via the configured LLM (Sarvam or Claude). */
 export async function structureTranscript(transcript) {
@@ -129,15 +131,25 @@ export async function structureTranscript(transcript) {
     };
   }
 
-  const text = await complete({
-    system: STRUCTURE_SYSTEM_PROMPT,
-    user: transcript,
-    maxTokens: 2048,
-  });
-  const items = extractJsonArray(text);
+  let items = [];
+  let note = null;
+  try {
+    const text = await complete({
+      system: STRUCTURE_SYSTEM_PROMPT,
+      user: transcript,
+      maxTokens: 2048,
+    });
+    items = extractJsonArray(text);
+  } catch (err) {
+    logger.warn({ err: err.message, transcript }, 'Transcript structuring produced no items');
+    note = 'I could not identify products in that recording.';
+  }
+  if (!items.length && !note) {
+    note = 'No products were mentioned clearly enough to catch.';
+  }
   return {
     source: 'llm',
-    note: null,
+    note,
     items: items.map((i) => toSkuDraft(i, 'voice')),
   };
 }

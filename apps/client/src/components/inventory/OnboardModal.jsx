@@ -27,6 +27,7 @@ export default function OnboardModal({ open, onClose }) {
   const [rows, setRows] = useState(null); // null = capture step, array = review step
   const [note, setNote] = useState(null);
   const [transcript, setTranscript] = useState(null);
+  const [missMessage, setMissMessage] = useState(null); // nothing caught — stay on capture step
   const [recording, setRecording] = useState(false);
   const mediaRecorderRef = useRef(null);
   const chunksRef = useRef([]);
@@ -43,6 +44,7 @@ export default function OnboardModal({ open, onClose }) {
     setRows(null);
     setNote(null);
     setTranscript(null);
+    setMissMessage(null);
     photo.reset();
     voice.reset();
     save.reset();
@@ -54,6 +56,18 @@ export default function OnboardModal({ open, onClose }) {
   };
 
   const handleParsed = (data) => {
+    // Nothing caught: stay on the capture step and explain, don't show an
+    // empty review table
+    if (!data.items?.length) {
+      setMissMessage(
+        (data.transcript
+          ? `I heard: “${data.transcript}” — but couldn't identify any products.`
+          : `I couldn't identify any products.`) +
+          ' Try again: say the product name, quantity and price, e.g. “20 packet Parle-G, 30 rupaye wale”.'
+      );
+      return;
+    }
+    setMissMessage(null);
     setRows(toRows(data.items));
     setNote(data.note);
     if (data.transcript) setTranscript(data.transcript);
@@ -140,6 +154,11 @@ export default function OnboardModal({ open, onClose }) {
             {(photo.isError || voice.isError) && (
               <p className="mb-3 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
                 {photo.error?.message || voice.error?.message}
+              </p>
+            )}
+            {!busy && missMessage && (
+              <p className="mb-3 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800">
+                {missMessage}
               </p>
             )}
 
