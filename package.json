@@ -6,7 +6,8 @@
   "workspaces": [
     "apps/client",
     "apps/server",
-    "packages/data-simulator"
+    "packages/data-simulator",
+    "agent"
   ],
   "scripts": {
     "dev:server": "npm run dev --workspace apps/server",

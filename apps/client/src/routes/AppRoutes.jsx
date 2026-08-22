@@ -6,7 +6,7 @@ import SignupPage from '../pages/SignupPage.jsx';
 import DashboardHomePage from '../pages/DashboardHomePage.jsx';
 import CashflowPage from '../pages/CashflowPage.jsx';
 import InventoryPage from '../pages/InventoryPage.jsx';
-import ComingSoonPage from '../pages/ComingSoonPage.jsx';
+import SalesCopilotPage from '../pages/SalesCopilotPage.jsx';
 import NotFoundPage from '../pages/NotFoundPage.jsx';
 
 export default function AppRoutes() {
@@ -21,7 +21,7 @@ export default function AppRoutes() {
           <Route path="/dashboard" element={<DashboardHomePage />} />
           <Route path="/cashflow" element={<CashflowPage />} />
           <Route path="/inventory" element={<InventoryPage />} />
-          <Route path="/sales" element={<ComingSoonPage title="Sales & Growth Copilot" phase={4} />} />
+          <Route path="/sales" element={<SalesCopilotPage />} />
         </Route>
       </Route>
 

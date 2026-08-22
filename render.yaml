@@ -13,7 +13,7 @@ services:
     runtime: node
     plan: free
     rootDir: .
-    buildCommand: npm install --workspace apps/server --workspace packages/data-simulator
+    buildCommand: npm install --workspace apps/server --workspace packages/data-simulator --workspace agent
     startCommand: node apps/server/src/server.js
     healthCheckPath: /health
     envVars:

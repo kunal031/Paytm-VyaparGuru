@@ -1,0 +1,17 @@
+{
+  "name": "@vyaparguru/agent",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "LangGraph Sales & Growth Copilot — intent classification → data retrieval (backend API tools) → analysis → response synthesis. Never fabricates numbers; only narrates retrieved data.",
+  "main": "graph.js",
+  "exports": {
+    ".": "./graph.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.120.0",
+    "@langchain/core": "^0.3.0",
+    "@langchain/langgraph": "^0.2.0",
+    "axios": "^1.7.2"
+  }
+}

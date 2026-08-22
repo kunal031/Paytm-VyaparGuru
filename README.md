@@ -13,7 +13,7 @@ An AI co-pilot for Indian SMB merchants that turns Paytm-style transaction data 
 | `apps/ml-service` | Python FastAPI, Prophet/statsmodels, scikit-learn | 8000 |
 | `mongodb` | MongoDB 7 | 27017 |
 | `packages/data-simulator` | Node.js synthetic Paytm transaction generator | — |
-| `agent/` | LangGraph Sales & Growth Copilot (Phase 4) | — |
+| `agent/` | LangGraph (JS) Sales & Growth Copilot, invoked in-process by the server | — |
 
 ## Quick start (Docker — recommended)
 
@@ -113,5 +113,5 @@ Free-tier note: services sleep after idle — the first request after a while ta
 - [x] **Phase 1** — Monorepo scaffold, docker-compose, data simulator + seed, JWT auth end-to-end
 - [x] **Phase 2** — Cash Flow Clarity: daily revenue/profit/expense endpoints, SARIMAX forecast with festival regressors (+ local JS fallback when the ML service is down), hidden-expense detection, responsive dashboard
 - [x] **Phase 3** — Inventory Intelligence: photo/voice stock onboarding (Claude vision + Whisper, with labeled demo fallback when API keys are absent), fast/slow/dead classification (KMeans + rules, JS fallback), festival-aware stockout prediction & reorder suggestions, probabilistic amount→SKU attribution
-- [ ] **Phase 4** — Sales & Growth Copilot: LangGraph agent with tool-calling over internal APIs, multilingual voice
+- [x] **Phase 4** — Sales & Growth Copilot: LangGraph (JS) agent — translate → intent classification → tool-based data retrieval → code-only analysis → synthesis → translate back. Tools: getSalesByPeriod, getTopSKUs, getStockoutHistory, getDiscountImpact (+ inventory/forecast). Never fabricates numbers. Chat widget with voice input (Whisper), English/हिन्दी/తెలుగు selector, browser TTS. Runs without API keys via rule-based intents + template answers.
 - [ ] **Phase 5** — Unified dashboard, hero demo merchant, polish
