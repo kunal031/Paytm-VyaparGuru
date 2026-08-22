@@ -24,9 +24,9 @@ async function sarvamComplete({ system, user, maxTokens }) {
         { role: 'system', content: system },
         { role: 'user', content: user },
       ],
-      // sarvam-105b spends tokens on reasoning before the answer — keep the
-      // budget generous so short answers (e.g. an intent id) never truncate
-      max_tokens: Math.max(maxTokens * 4, 2048),
+      // sarvam-105b spends ~500 tokens reasoning before the answer — pad the
+      // budget so short answers (e.g. an intent id) never truncate
+      max_tokens: Math.max(maxTokens + 1000, 1500),
       temperature: 0.2,
     },
     {

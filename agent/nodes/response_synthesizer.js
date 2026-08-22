@@ -77,6 +77,16 @@ function templateAnswer(state) {
           : '';
       return `Your worst sellers over the last 30 days:\n${lines.join('\n')}${deadNote}`;
     }
+    case 'new_products': {
+      const added = a.newProducts;
+      if (!added?.length) {
+        return 'No new products have been added since your catalog was set up. Add stock via photo, voice, or manual entry on the Inventory page and they will show up here.';
+      }
+      const lines = added.slice(0, 5).map(
+        (p) => `• ${p.name} (${p.category}) — ${inr(p.price)}, ${p.currentStock} ${p.unit}, added ${p.addedOn} via ${p.addedVia}`
+      );
+      return `Products you added recently:\n${lines.join('\n')}`;
+    }
     case 'stockout_history': {
       if (!a.stockoutSummary?.length) return 'Good news — no stockout gaps detected in the last 90 days.';
       const lines = a.stockoutSummary
@@ -119,15 +129,22 @@ function templateAnswer(state) {
   }
 }
 
-/** Node: turn retrieved data + analysis into a merchant-friendly answer. */
+const LANGUAGE_NAMES = { en: 'English', hi: 'Hindi', te: 'Telugu' };
+
+/**
+ * Node: turn retrieved data + analysis into a merchant-friendly answer,
+ * written directly in the merchant's language (one LLM call — no separate
+ * translation round-trips).
+ */
 export async function synthesizeResponse(state) {
   if (hasLlm()) {
     try {
       const answer = await complete({
         system: SYNTHESIS_SYSTEM_PROMPT,
         user: JSON.stringify({
-          question: state.questionEnglish || state.question,
+          question: state.question,
           intent: state.intent,
+          responseLanguage: LANGUAGE_NAMES[state.language] || 'English',
           retrieved: formatMoneyDeep(state.retrieved, null),
           analysis: formatMoneyDeep(state.analysis, null),
         }),
@@ -138,5 +155,9 @@ export async function synthesizeResponse(state) {
       // fall through to template
     }
   }
-  return { answer: templateAnswer(state), answerSource: 'template' };
+  let answer = templateAnswer(state);
+  if (state.language && state.language !== 'en') {
+    answer += `\n\n(${LANGUAGE_NAMES[state.language]} replies need an AI API key configured — answering in English for now.)`;
+  }
+  return { answer, answerSource: 'template' };
 }

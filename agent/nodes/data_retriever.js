@@ -5,6 +5,7 @@ import {
   getDiscountImpact,
   getInventoryOverview,
   getCashflowForecast,
+  getAllSkus,
 } from '../tools/backendTools.js';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -55,6 +56,9 @@ export async function retrieveData(state) {
         run('topSkus', () => getTopSKUs(ctx, { days: 30 })),
         run('inventory', () => getInventoryOverview(ctx)),
       ]);
+      break;
+    case 'new_products':
+      await run('skus', () => getAllSkus(ctx));
       break;
     case 'stockout_history':
       await Promise.all([

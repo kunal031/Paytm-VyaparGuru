@@ -64,6 +64,24 @@ export async function analyze(state) {
     };
   }
 
+  // Newly added products: merchant-added (photo/voice/manual) beat seeded
+  // catalog entries; sorted newest first
+  if (r.skus?.skus?.length) {
+    analysis.newProducts = r.skus.skus
+      .filter((s) => s.createdVia !== 'seed')
+      .sort((x, y) => new Date(y.createdAt) - new Date(x.createdAt))
+      .slice(0, 10)
+      .map((s) => ({
+        name: s.name,
+        category: s.category,
+        price: s.price,
+        currentStock: s.currentStock,
+        unit: s.unit,
+        addedVia: s.createdVia,
+        addedOn: String(s.createdAt).slice(0, 10),
+      }));
+  }
+
   // Inventory highlights
   if (r.inventory?.summary) {
     analysis.inventory = {

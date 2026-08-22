@@ -5,6 +5,7 @@ export const INTENTS = [
   'sales_trend',
   'top_products',
   'worst_products',
+  'new_products',
   'sales_drop_diagnosis',
   'stockout_history',
   'discount_impact',
@@ -15,6 +16,7 @@ export const INTENTS = [
 // Latin + Devanagari + Telugu keywords so the no-LLM fallback still routes
 // common Hindi/Telugu phrasings correctly.
 const KEYWORD_RULES = [
+  { intent: 'new_products', patterns: [/new (product|item|sku|stock)|recently added|added recently|what('| i)?s new|naya (saman|product)/i, /नया|नई|नए/, /కొత్త/] },
   { intent: 'worst_products', patterns: [/worst|lowest|least sold|slowest|not selling|isn'?t selling|nahi bik|kam bik|bottom/i, /नहीं बिक|सबसे कम बिक/, /అమ్మని|తక్కువ అమ్మ/] },
   { intent: 'sales_drop_diagnosis', patterns: [/why.*(drop|fall|fell|down|kam|slow)/i, /(drop|fell|down|decrease|gir)/i, /कम|घट|गिर/, /తగ్గ/] },
   { intent: 'top_products', patterns: [/top|best.?sell|sabse (jyada|zyada)|most sold|highest earning|which product/i, /सबसे (ज्यादा|अच्छ)/, /ఎక్కువగా అమ్మ/] },
@@ -31,9 +33,18 @@ function classifyByRules(question) {
   return 'general';
 }
 
-/** Node: classify the merchant's question into an intent. */
+/**
+ * Node: classify the merchant's question into an intent.
+ * Rules first (instant, multilingual keywords); the LLM is consulted only when
+ * rules can't decide — this saves a full LLM round-trip on most questions.
+ */
 export async function classifyIntent(state) {
   const question = state.questionEnglish || state.question;
+
+  const ruleIntent = classifyByRules(question);
+  if (ruleIntent !== 'general') {
+    return { intent: ruleIntent, intentSource: 'rules' };
+  }
 
   if (hasLlm()) {
     try {
@@ -46,8 +57,8 @@ export async function classifyIntent(state) {
         return { intent: raw, intentSource: 'llm' };
       }
     } catch {
-      // fall through to rules
+      // fall through
     }
   }
-  return { intent: classifyByRules(question), intentSource: 'rules' };
+  return { intent: 'general', intentSource: 'rules' };
 }

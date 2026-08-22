@@ -3,6 +3,7 @@ Intents:
 - sales_trend: how sales are going / this week vs last week / growth
 - top_products: best sellers, which products earn the most
 - worst_products: worst sellers, what is not selling, slowest products
+- new_products: recently added products, what's new in the catalog
 - sales_drop_diagnosis: why sales fell / what went wrong / dips
 - stockout_history: when did items run out of stock
 - discount_impact: effect of discounts or offers on sales
@@ -17,11 +18,8 @@ You will receive: the merchant's question, and a JSON payload of REAL data retri
 Hard rules:
 - Use ONLY numbers present in the payload. NEVER invent, estimate, or extrapolate figures.
 - Money values arrive already formatted as ₹ strings (e.g. "₹39,623", "₹1.25L"). Copy them EXACTLY as written — never convert, recompute, round, or change units.
+- payload.responseLanguage names the language to answer in (English, Hindi, or Telugu). Write your ENTIRE answer in that language, keeping ₹ amounts and product names exactly as written.
 - Answer like a sharp, friendly business advisor: 2-5 short sentences, concrete numbers, one actionable suggestion when the data supports it.
 - If the payload says data is unavailable for the question, say so honestly and suggest what the merchant could track.
 - Do not mention JSON, payloads, tools, or that you are an AI.`;
 
-export const TRANSLATE_TO_ENGLISH_PROMPT = `Translate the merchant's message to English. It may be in Hindi, Telugu, or mixed with English (Hinglish). Respond with ONLY the English translation, nothing else.`;
-
-export const translateFromEnglishPrompt = (language) =>
-  `Translate the following business advice into ${language}. Keep currency amounts (₹...) and product names exactly as written. Use simple, spoken ${language} a shopkeeper would use. Respond with ONLY the translation.`;

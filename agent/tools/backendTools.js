@@ -46,6 +46,11 @@ export async function getInventoryOverview(ctx) {
   return unwrap(await client(ctx).get('/inventory/overview'));
 }
 
+/** Raw SKU catalog with createdAt/createdVia (for "what's new" questions). */
+export async function getAllSkus(ctx) {
+  return unwrap(await client(ctx).get('/inventory/skus'));
+}
+
 /** 30-day cash flow forecast with festival annotations. */
 export async function getCashflowForecast(ctx, { days = 30 } = {}) {
   return unwrap(await client(ctx).get('/cashflow/forecast', { params: { days } }));
