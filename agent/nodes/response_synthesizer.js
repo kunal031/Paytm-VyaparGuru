@@ -44,6 +44,19 @@ function templateAnswer(state) {
       const lines = top.map((t, i) => `${i + 1}. ${t.name} — ${inr(t.revenue)} (${t.units} units)`);
       return `Your top products over the last 30 days:\n${lines.join('\n')}`;
     }
+    case 'worst_products': {
+      const worst = r.topSkus?.worstByUnits?.slice(0, 3);
+      if (!worst?.length) return 'No sales data available yet to rank your products.';
+      const lines = worst.map((t, i) =>
+        `${i + 1}. ${t.name} — ${t.units === 0 ? 'zero sales' : `only ${t.units} units (${inr(t.revenue)})`} in 30 days`
+      );
+      const dead = a.inventory;
+      const deadNote =
+        dead?.dead > 0
+          ? `\n\nYou have ${dead.dead} dead-stock item(s) tying up ${inr(dead.deadStockValue)} — consider a clearance offer or bundling them with fast movers.`
+          : '';
+      return `Your worst sellers over the last 30 days:\n${lines.join('\n')}${deadNote}`;
+    }
     case 'stockout_history': {
       if (!a.stockoutSummary?.length) return 'Good news — no stockout gaps detected in the last 90 days.';
       const lines = a.stockoutSummary
@@ -65,9 +78,22 @@ function templateAnswer(state) {
     }
     default: {
       const w = r.thisWeek?.totals;
+      // Pure greeting (no data retrieved)
+      if (!r.topSkus) {
+        return `Namaste! I'm your Sales & Growth Copilot. Ask me things like "How were my sales this week?", "Why did sales drop?", or "What's not selling?"`;
+      }
+      // Unmatched question: be honest, but still give a grounded snapshot
+      const top = r.topSkus?.byRevenue?.[0];
+      const worst = r.topSkus?.worstByUnits?.[0];
+      const parts = [];
+      if (w) parts.push(`this week you've made ${inr(w.revenue)} from ${w.transactions} transactions`);
+      if (top) parts.push(`your best seller is ${top.name} (${inr(top.revenue)} in 30 days)`);
+      if (worst) parts.push(`your weakest is ${worst.name} (${worst.units === 0 ? 'zero sales' : `${worst.units} units`})`);
+      const deadNote =
+        a.inventory?.dead > 0 ? ` ${a.inventory.dead} item(s) are dead stock worth ${inr(a.inventory.deadStockValue)}.` : '';
       return (
-        `Namaste! I'm your Sales & Growth Copilot. Ask me things like "How were my sales this week?", "Why did sales drop?", or "What are my top products?"` +
-        (w ? ` (This week so far: ${inr(w.revenue)} from ${w.transactions} transactions.)` : '')
+        `I don't have a specific answer for that question yet — I can dig into sales trends, top/worst products, stockouts, discounts and forecasts. ` +
+        `Meanwhile, a quick snapshot: ${parts.join('; ')}.${deadNote}`
       );
     }
   }

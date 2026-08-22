@@ -2,6 +2,7 @@ export const INTENT_SYSTEM_PROMPT = `You classify an Indian SMB merchant's quest
 Intents:
 - sales_trend: how sales are going / this week vs last week / growth
 - top_products: best sellers, which products earn the most
+- worst_products: worst sellers, what is not selling, slowest products
 - sales_drop_diagnosis: why sales fell / what went wrong / dips
 - stockout_history: when did items run out of stock
 - discount_impact: effect of discounts or offers on sales

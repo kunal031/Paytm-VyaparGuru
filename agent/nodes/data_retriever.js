@@ -50,6 +50,12 @@ export async function retrieveData(state) {
         run('thisWeek', () => getSalesByPeriod(ctx, thisWeek)),
       ]);
       break;
+    case 'worst_products':
+      await Promise.all([
+        run('topSkus', () => getTopSKUs(ctx, { days: 30 })),
+        run('inventory', () => getInventoryOverview(ctx)),
+      ]);
+      break;
     case 'stockout_history':
       await Promise.all([
         run('stockouts', () => getStockoutHistory(ctx, { days: 90 })),
@@ -66,8 +72,13 @@ export async function retrieveData(state) {
       ]);
       break;
     default:
-      // general: light snapshot so greetings can still be helpful
-      await run('thisWeek', () => getSalesByPeriod(ctx, thisWeek));
+      // general/unmatched: broad snapshot so the answer can still be useful
+      await Promise.all([
+        run('thisWeek', () => getSalesByPeriod(ctx, thisWeek)),
+        run('lastWeek', () => getSalesByPeriod(ctx, lastWeek)),
+        run('topSkus', () => getTopSKUs(ctx, { days: 30 })),
+        run('inventory', () => getInventoryOverview(ctx)),
+      ]);
       break;
   }
 

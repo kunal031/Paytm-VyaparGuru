@@ -4,6 +4,7 @@ import { INTENT_SYSTEM_PROMPT } from '../prompts/prompts.js';
 export const INTENTS = [
   'sales_trend',
   'top_products',
+  'worst_products',
   'sales_drop_diagnosis',
   'stockout_history',
   'discount_impact',
@@ -14,6 +15,7 @@ export const INTENTS = [
 // Latin + Devanagari + Telugu keywords so the no-LLM fallback still routes
 // common Hindi/Telugu phrasings correctly.
 const KEYWORD_RULES = [
+  { intent: 'worst_products', patterns: [/worst|lowest|least sold|slowest|not selling|isn'?t selling|nahi bik|kam bik|bottom/i, /नहीं बिक|सबसे कम बिक/, /అమ్మని|తక్కువ అమ్మ/] },
   { intent: 'sales_drop_diagnosis', patterns: [/why.*(drop|fall|fell|down|kam|slow)/i, /(drop|fell|down|decrease|gir)/i, /कम|घट|गिर/, /తగ్గ/] },
   { intent: 'top_products', patterns: [/top|best.?sell|sabse (jyada|zyada)|most sold|highest earning|which product/i, /सबसे (ज्यादा|अच्छ)/, /ఎక్కువగా అమ్మ/] },
   { intent: 'stockout_history', patterns: [/stock ?out|out of stock|khatam|ran out|stock gaya/i, /ख़त्म|खत्म|स्टॉक/, /అయిపోయ|స్టాక్/] },

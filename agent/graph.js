@@ -73,8 +73,13 @@ async function translateOut(state) {
   }
 }
 
+const GREETING_RE = /^\s*(hi|hii+|hello|hey|namaste|namaskar|good (morning|evening|afternoon))[\s!.]*$/i;
+
 function routeAfterIntent(state) {
-  return state.intent === 'general' ? 'synthesize' : 'retrieve';
+  // Only pure greetings skip retrieval; every other "general" question still
+  // gets a data snapshot so the answer is grounded in real numbers.
+  const question = state.questionEnglish || state.question || '';
+  return state.intent === 'general' && GREETING_RE.test(question) ? 'synthesize' : 'retrieve';
 }
 
 let _compiled = null;

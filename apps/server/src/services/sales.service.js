@@ -61,10 +61,28 @@ export async function getTopSKUs(merchantId, days) {
     revenue: r.revenue,
   }));
 
+  // Include catalog SKUs with zero attributed sales — they're the true worst sellers
+  const soldIds = new Set(rows.map((r) => r.skuId.toString()));
+  const unsold = await SKU.find({ merchantId, _id: { $nin: [...soldIds] } })
+    .select('_id name category currentStock costPrice')
+    .lean();
+  const allRows = [
+    ...rows,
+    ...unsold.map((s) => ({
+      skuId: s._id,
+      name: s.name,
+      category: s.category,
+      units: 0,
+      revenue: 0,
+      stockValue: s.currentStock * s.costPrice,
+    })),
+  ];
+
   return {
     days,
     byRevenue: [...rows].sort((a, b) => b.revenue - a.revenue).slice(0, 10),
     byUnits: [...rows].sort((a, b) => b.units - a.units).slice(0, 10),
+    worstByUnits: [...allRows].sort((a, b) => a.units - b.units || a.revenue - b.revenue).slice(0, 10),
   };
 }
 
