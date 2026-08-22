@@ -1,0 +1,50 @@
+{
+  "id": "kirana",
+  "merchant": {
+    "businessName": "Sharma General Store",
+    "ownerName": "Ramesh Sharma",
+    "phone": "9876543210",
+    "email": "ramesh@sharmastore.in",
+    "businessType": "kirana",
+    "location": { "city": "Jaipur", "state": "Rajasthan" }
+  },
+  "dailyTxnBase": 55,
+  "weekendMultiplier": 1.35,
+  "openHours": [8, 22],
+  "paymentModeWeights": { "QR": 0.55, "Soundbox": 0.35, "Gateway": 0.02, "POS": 0.08 },
+  "miscSaleChance": 0.18,
+  "miscSaleRangeINR": [10, 250],
+  "catalog": [
+    { "name": "Parle-G Biscuit 250g", "category": "Snacks", "priceINR": 30, "costINR": 24, "unit": "pack", "velocity": 14, "tag": "fast" },
+    { "name": "Amul Taaza Milk 500ml", "category": "Dairy", "priceINR": 27, "costINR": 24, "unit": "pouch", "velocity": 22, "tag": "fast" },
+    { "name": "Tata Salt 1kg", "category": "Staples", "priceINR": 28, "costINR": 22, "unit": "pack", "velocity": 6, "tag": "normal" },
+    { "name": "Aashirvaad Atta 5kg", "category": "Staples", "priceINR": 260, "costINR": 228, "unit": "bag", "velocity": 4, "tag": "normal" },
+    { "name": "Maggi Noodles 70g", "category": "Snacks", "priceINR": 14, "costINR": 11, "unit": "pack", "velocity": 18, "tag": "fast" },
+    { "name": "Red Label Tea 250g", "category": "Beverages", "priceINR": 150, "costINR": 128, "unit": "pack", "velocity": 3.5, "tag": "normal" },
+    { "name": "Fortune Sunflower Oil 1L", "category": "Staples", "priceINR": 145, "costINR": 128, "unit": "bottle", "velocity": 5, "tag": "normal" },
+    { "name": "Surf Excel 1kg", "category": "Household", "priceINR": 135, "costINR": 112, "unit": "pack", "velocity": 3, "tag": "normal" },
+    { "name": "Colgate MaxFresh 150g", "category": "Personal Care", "priceINR": 95, "costINR": 76, "unit": "tube", "velocity": 2.5, "tag": "normal" },
+    { "name": "Dettol Soap 125g", "category": "Personal Care", "priceINR": 45, "costINR": 36, "unit": "bar", "velocity": 4, "tag": "normal" },
+    { "name": "Haldiram Bhujia 400g", "category": "Snacks", "priceINR": 110, "costINR": 90, "unit": "pack", "velocity": 3, "tag": "normal" },
+    { "name": "Thums Up 750ml", "category": "Beverages", "priceINR": 45, "costINR": 38, "unit": "bottle", "velocity": 7, "tag": "fast" },
+    { "name": "Premium Kaju Katli 500g", "category": "Sweets", "priceINR": 450, "costINR": 380, "unit": "box", "velocity": 0.15, "tag": "dead", "deadStock": 42 },
+    { "name": "Imported Green Tea 100g", "category": "Beverages", "priceINR": 320, "costINR": 270, "unit": "pack", "velocity": 0.08, "tag": "dead", "deadStock": 35 },
+    { "name": "Fancy Diya Set (12pc)", "category": "Festive", "priceINR": 180, "costINR": 120, "unit": "set", "velocity": 0.1, "tag": "dead", "deadStock": 60, "festivalBoost": ["Diwali"] },
+    { "name": "Ariel Pods Pack", "category": "Household", "priceINR": 299, "costINR": 255, "unit": "pack", "velocity": 0.3, "tag": "slow" },
+    { "name": "Kellogg's Muesli 500g", "category": "Snacks", "priceINR": 385, "costINR": 330, "unit": "pack", "velocity": 0.4, "tag": "slow" }
+  ],
+  "expenses": {
+    "rentINR": 18000,
+    "salaryINR": 12000,
+    "electricityRangeINR": [2200, 3800],
+    "supplierRestockRangeINR": [8000, 25000],
+    "supplierFrequencyDays": 6,
+    "hiddenRecurring": [
+      { "category": "Billing Software Subscription", "amountINR": 299, "everyDays": 30 },
+      { "category": "Water Can Delivery", "amountINR": 480, "everyDays": 15 },
+      { "category": "WhatsApp Business Tool", "amountINR": 199, "everyDays": 30 }
+    ],
+    "dailyMiscRangeINR": [50, 300]
+  },
+  "stockoutWindows": 3
+}

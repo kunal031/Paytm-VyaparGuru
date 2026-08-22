@@ -1,0 +1,42 @@
+{
+  "id": "manufacturer",
+  "merchant": {
+    "businessName": "Bharat Fasteners Works",
+    "ownerName": "Suresh Patil",
+    "phone": "9765432109",
+    "email": "suresh@bharatfasteners.in",
+    "businessType": "manufacturer",
+    "location": { "city": "Pune", "state": "Maharashtra" }
+  },
+  "dailyTxnBase": 6,
+  "weekendMultiplier": 0.4,
+  "openHours": [9, 19],
+  "paymentModeWeights": { "QR": 0.2, "Soundbox": 0.05, "Gateway": 0.55, "POS": 0.2 },
+  "miscSaleChance": 0.1,
+  "miscSaleRangeINR": [2000, 40000],
+  "catalog": [
+    { "name": "MS Hex Bolts Box (500pc)", "category": "Fasteners", "priceINR": 2400, "costINR": 1700, "unit": "box", "velocity": 2.2, "tag": "fast" },
+    { "name": "SS Self-Tapping Screws (1000pc)", "category": "Fasteners", "priceINR": 3200, "costINR": 2250, "unit": "box", "velocity": 1.8, "tag": "fast" },
+    { "name": "Anchor Fastener Kit", "category": "Fasteners", "priceINR": 5500, "costINR": 3900, "unit": "kit", "velocity": 0.9, "tag": "normal" },
+    { "name": "Galvanized Nuts Box (500pc)", "category": "Fasteners", "priceINR": 1800, "costINR": 1250, "unit": "box", "velocity": 1.4, "tag": "normal" },
+    { "name": "Custom CNC Bracket Batch", "category": "Custom Jobs", "priceINR": 18000, "costINR": 12500, "unit": "batch", "velocity": 0.35, "tag": "normal" },
+    { "name": "Threaded Rods Bundle (3m x 20)", "category": "Rods", "priceINR": 4200, "costINR": 3000, "unit": "bundle", "velocity": 0.7, "tag": "normal" },
+    { "name": "Brass Inserts Box (200pc)", "category": "Fasteners", "priceINR": 6800, "costINR": 4900, "unit": "box", "velocity": 0.12, "tag": "dead", "deadStock": 26 },
+    { "name": "Legacy Rivet Gun Set", "category": "Tools", "priceINR": 8500, "costINR": 6200, "unit": "set", "velocity": 0.05, "tag": "dead", "deadStock": 14 },
+    { "name": "Washer Assortment Pack", "category": "Fasteners", "priceINR": 950, "costINR": 620, "unit": "pack", "velocity": 0.4, "tag": "slow" }
+  ],
+  "expenses": {
+    "rentINR": 60000,
+    "salaryINR": 180000,
+    "electricityRangeINR": [22000, 40000],
+    "supplierRestockRangeINR": [100000, 300000],
+    "supplierFrequencyDays": 10,
+    "hiddenRecurring": [
+      { "category": "Tally License", "amountINR": 1800, "everyDays": 30 },
+      { "category": "Machine AMC Installment", "amountINR": 4500, "everyDays": 30 },
+      { "category": "IndiaMART Listing Fee", "amountINR": 2999, "everyDays": 30 }
+    ],
+    "dailyMiscRangeINR": [500, 2500]
+  },
+  "stockoutWindows": 2
+}

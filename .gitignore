@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Env — never commit real secrets
+.env
+.env.local
+.env.*.local
+.claude
+
+# Build output
+dist/
+build/
+*.tsbuildinfo
+
+# Simulator output (regenerate with `npm run simulate`)
+packages/data-simulator/output/*.json
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Test / coverage
+coverage/
+.pytest_cache/

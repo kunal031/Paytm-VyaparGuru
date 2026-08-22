@@ -1,0 +1,65 @@
+# Render Blueprint — deploys the whole VyaparGuru stack on the free tier.
+# Prereq: a MongoDB Atlas free (M0) cluster; paste its connection string into
+# the MONGODB_URI prompt when applying this blueprint.
+#
+# Note: Render appends a random suffix to .onrender.com URLs if a name is taken.
+# After the first deploy, verify VITE_API_BASE_URL / ML_SERVICE_URL / CLIENT_URL
+# match the actual service URLs and update them in the dashboard if needed.
+
+services:
+  # ---------- Node/Express API ----------
+  - type: web
+    name: vyaparguru-server
+    runtime: node
+    plan: free
+    rootDir: .
+    buildCommand: npm install --workspace apps/server --workspace packages/data-simulator
+    startCommand: node apps/server/src/server.js
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false # paste your Atlas connection string (ends with /vyaparguru)
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: SEED_ON_BOOT
+        value: "true" # seeds demo merchants only when the DB is empty
+      - key: ML_SERVICE_URL
+        value: https://vyaparguru-ml.onrender.com
+      - key: CLIENT_URL
+        value: https://vyaparguru-client.onrender.com
+      - key: ANTHROPIC_API_KEY
+        sync: false # optional — photo/voice onboarding runs in demo mode without it
+      - key: OPENAI_API_KEY
+        sync: false # optional — Whisper STT runs in demo mode without it
+
+  # ---------- Python FastAPI ML service ----------
+  - type: web
+    name: vyaparguru-ml
+    runtime: python
+    plan: free
+    rootDir: apps/ml-service
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+
+  # ---------- React client (static site) ----------
+  - type: web
+    name: vyaparguru-client
+    runtime: static
+    rootDir: .
+    buildCommand: npm install --workspace apps/client && npm run build --workspace apps/client
+    staticPublishPath: apps/client/dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_BASE_URL
+        value: https://vyaparguru-server.onrender.com/api/v1

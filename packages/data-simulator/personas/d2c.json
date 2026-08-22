@@ -1,0 +1,45 @@
+{
+  "id": "d2c",
+  "merchant": {
+    "businessName": "Aranya Naturals",
+    "ownerName": "Priya Nair",
+    "phone": "9812345670",
+    "email": "priya@aranyanaturals.in",
+    "businessType": "d2c",
+    "location": { "city": "Bengaluru", "state": "Karnataka" }
+  },
+  "dailyTxnBase": 18,
+  "weekendMultiplier": 1.15,
+  "openHours": [0, 24],
+  "paymentModeWeights": { "QR": 0.1, "Soundbox": 0.0, "Gateway": 0.85, "POS": 0.05 },
+  "miscSaleChance": 0.05,
+  "miscSaleRangeINR": [200, 1500],
+  "catalog": [
+    { "name": "Cold-Pressed Coconut Oil 500ml", "category": "Oils", "priceINR": 449, "costINR": 260, "unit": "bottle", "velocity": 6, "tag": "fast" },
+    { "name": "Herbal Face Wash 100ml", "category": "Skincare", "priceINR": 349, "costINR": 180, "unit": "bottle", "velocity": 5, "tag": "fast" },
+    { "name": "Vitamin C Serum 30ml", "category": "Skincare", "priceINR": 699, "costINR": 320, "unit": "bottle", "velocity": 4, "tag": "fast" },
+    { "name": "Neem Comb", "category": "Accessories", "priceINR": 249, "costINR": 110, "unit": "pcs", "velocity": 1.5, "tag": "normal" },
+    { "name": "Aloe Vera Gel 200ml", "category": "Skincare", "priceINR": 299, "costINR": 140, "unit": "jar", "velocity": 3, "tag": "normal" },
+    { "name": "Rosewater Toner 100ml", "category": "Skincare", "priceINR": 275, "costINR": 130, "unit": "bottle", "velocity": 2.5, "tag": "normal" },
+    { "name": "Hair Growth Oil 200ml", "category": "Haircare", "priceINR": 549, "costINR": 250, "unit": "bottle", "velocity": 3.5, "tag": "normal" },
+    { "name": "Gift Hamper Deluxe", "category": "Gifting", "priceINR": 1999, "costINR": 1100, "unit": "box", "velocity": 0.3, "tag": "slow", "festivalBoost": ["Diwali", "Raksha Bandhan"] },
+    { "name": "Charcoal Face Mask 100g", "category": "Skincare", "priceINR": 399, "costINR": 210, "unit": "jar", "velocity": 0.1, "tag": "dead", "deadStock": 55 },
+    { "name": "Beard Balm 50g", "category": "Grooming", "priceINR": 425, "costINR": 220, "unit": "jar", "velocity": 0.08, "tag": "dead", "deadStock": 48 },
+    { "name": "Lip Balm Trio Pack", "category": "Skincare", "priceINR": 499, "costINR": 240, "unit": "pack", "velocity": 0.35, "tag": "slow" }
+  ],
+  "expenses": {
+    "rentINR": 25000,
+    "salaryINR": 45000,
+    "electricityRangeINR": [3000, 5000],
+    "supplierRestockRangeINR": [30000, 80000],
+    "supplierFrequencyDays": 14,
+    "hiddenRecurring": [
+      { "category": "Shopify Subscription", "amountINR": 1994, "everyDays": 30 },
+      { "category": "Instagram Ads Auto-debit", "amountINR": 2500, "everyDays": 7 },
+      { "category": "Shipping Aggregator Fee", "amountINR": 999, "everyDays": 30 },
+      { "category": "Email Marketing Tool", "amountINR": 750, "everyDays": 30 }
+    ],
+    "dailyMiscRangeINR": [100, 600]
+  },
+  "stockoutWindows": 2
+}

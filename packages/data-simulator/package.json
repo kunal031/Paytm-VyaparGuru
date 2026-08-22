@@ -1,0 +1,10 @@
+{
+  "name": "@vyaparguru/data-simulator",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Generates realistic synthetic Paytm-style transaction data (QR/Soundbox/Gateway/POS) with seasonality, festival spikes, dead-stock and stockout patterns.",
+  "scripts": {
+    "generate": "node generate.js"
+  }
+}

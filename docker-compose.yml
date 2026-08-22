@@ -1,0 +1,62 @@
+version: "3.9"
+
+services:
+  mongodb:
+    image: mongo:7
+    container_name: vyaparguru-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  server:
+    build:
+      context: .
+      dockerfile: apps/server/Dockerfile
+    container_name: vyaparguru-server
+    restart: unless-stopped
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    environment:
+      - NODE_ENV=development
+      - PORT=5000
+      - MONGODB_URI=mongodb://mongodb:27017/vyaparguru
+      - JWT_SECRET=${JWT_SECRET:-dev-only-change-me}
+      - JWT_EXPIRES_IN=7d
+      - ML_SERVICE_URL=http://ml-service:8000
+      - CLIENT_URL=http://localhost:5173
+    ports:
+      - "5000:5000"
+
+  ml-service:
+    build:
+      context: ./apps/ml-service
+    container_name: vyaparguru-ml
+    restart: unless-stopped
+    environment:
+      - SERVER_INTERNAL_URL=http://server:5000
+    ports:
+      - "8000:8000"
+
+  client:
+    build:
+      context: .
+      dockerfile: apps/client/Dockerfile
+    container_name: vyaparguru-client
+    restart: unless-stopped
+    depends_on:
+      - server
+    environment:
+      - VITE_API_BASE_URL=http://localhost:5000/api/v1
+    ports:
+      - "5173:5173"
+
+volumes:
+  mongo_data:

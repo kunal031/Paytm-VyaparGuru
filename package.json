@@ -1,0 +1,21 @@
+{
+  "name": "paytm-vyapar-guru",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Paytm VyaparGuru — AI co-pilot for Indian SMB merchants: inventory foresight, cash flow clarity, and sales insights from Paytm-style transaction data.",
+  "workspaces": [
+    "apps/client",
+    "apps/server",
+    "packages/data-simulator"
+  ],
+  "scripts": {
+    "dev:server": "npm run dev --workspace apps/server",
+    "dev:client": "npm run dev --workspace apps/client",
+    "simulate": "npm run generate --workspace packages/data-simulator",
+    "seed": "npm run seed --workspace apps/server",
+    "lint": "npm run lint --workspaces --if-present"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

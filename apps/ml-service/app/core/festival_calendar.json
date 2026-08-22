@@ -1,0 +1,30 @@
+{
+  "description": "Indian festival calendar used by the data simulator (demand spikes) and the forecasting service (exogenous regressor). Dates for lunar festivals are approximate.",
+  "festivals": [
+    { "name": "Makar Sankranti", "date": "2026-01-14", "multiplier": 1.4, "spanDaysBefore": 2, "spanDaysAfter": 0, "region": "pan-india" },
+    { "name": "Republic Day", "date": "2026-01-26", "multiplier": 1.15, "spanDaysBefore": 1, "spanDaysAfter": 0, "region": "pan-india" },
+    { "name": "Maha Shivaratri", "date": "2026-02-15", "multiplier": 1.2, "spanDaysBefore": 1, "spanDaysAfter": 0, "region": "pan-india" },
+    { "name": "Holi", "date": "2026-03-04", "multiplier": 1.7, "spanDaysBefore": 3, "spanDaysAfter": 1, "region": "north-india" },
+    { "name": "Eid al-Fitr", "date": "2026-03-20", "multiplier": 1.6, "spanDaysBefore": 4, "spanDaysAfter": 1, "region": "pan-india" },
+    { "name": "Ram Navami", "date": "2026-03-26", "multiplier": 1.25, "spanDaysBefore": 1, "spanDaysAfter": 0, "region": "pan-india" },
+    { "name": "Baisakhi", "date": "2026-04-14", "multiplier": 1.3, "spanDaysBefore": 2, "spanDaysAfter": 0, "region": "north-india" },
+    { "name": "Akshaya Tritiya", "date": "2026-04-20", "multiplier": 1.35, "spanDaysBefore": 1, "spanDaysAfter": 0, "region": "pan-india" },
+    { "name": "Eid al-Adha", "date": "2026-05-27", "multiplier": 1.45, "spanDaysBefore": 3, "spanDaysAfter": 1, "region": "pan-india" },
+    { "name": "Rath Yatra", "date": "2026-07-16", "multiplier": 1.2, "spanDaysBefore": 1, "spanDaysAfter": 0, "region": "east-india" },
+    { "name": "Independence Day", "date": "2026-08-15", "multiplier": 1.2, "spanDaysBefore": 1, "spanDaysAfter": 0, "region": "pan-india" },
+    { "name": "Onam", "date": "2026-08-26", "multiplier": 1.5, "spanDaysBefore": 4, "spanDaysAfter": 1, "region": "south-india" },
+    { "name": "Raksha Bandhan", "date": "2026-08-28", "multiplier": 1.5, "spanDaysBefore": 4, "spanDaysAfter": 0, "region": "north-india" },
+    { "name": "Janmashtami", "date": "2026-09-04", "multiplier": 1.3, "spanDaysBefore": 2, "spanDaysAfter": 0, "region": "pan-india" },
+    { "name": "Ganesh Chaturthi", "date": "2026-09-14", "multiplier": 1.6, "spanDaysBefore": 3, "spanDaysAfter": 2, "region": "west-india" },
+    { "name": "Navratri Start", "date": "2026-10-11", "multiplier": 1.4, "spanDaysBefore": 2, "spanDaysAfter": 8, "region": "pan-india" },
+    { "name": "Dussehra", "date": "2026-10-20", "multiplier": 1.55, "spanDaysBefore": 2, "spanDaysAfter": 0, "region": "pan-india" },
+    { "name": "Dhanteras", "date": "2026-11-06", "multiplier": 1.8, "spanDaysBefore": 2, "spanDaysAfter": 0, "region": "pan-india" },
+    { "name": "Diwali", "date": "2026-11-08", "multiplier": 2.2, "spanDaysBefore": 5, "spanDaysAfter": 1, "region": "pan-india" },
+    { "name": "Bhai Dooj", "date": "2026-11-10", "multiplier": 1.3, "spanDaysBefore": 0, "spanDaysAfter": 0, "region": "north-india" },
+    { "name": "Christmas", "date": "2026-12-25", "multiplier": 1.35, "spanDaysBefore": 3, "spanDaysAfter": 1, "region": "pan-india" },
+    { "name": "Holi 2025", "date": "2025-03-14", "multiplier": 1.7, "spanDaysBefore": 3, "spanDaysAfter": 1, "region": "north-india" },
+    { "name": "Diwali 2025", "date": "2025-10-20", "multiplier": 2.2, "spanDaysBefore": 5, "spanDaysAfter": 1, "region": "pan-india" },
+    { "name": "Dussehra 2025", "date": "2025-10-02", "multiplier": 1.55, "spanDaysBefore": 2, "spanDaysAfter": 0, "region": "pan-india" },
+    { "name": "Christmas 2025", "date": "2025-12-25", "multiplier": 1.35, "spanDaysBefore": 3, "spanDaysAfter": 1, "region": "pan-india" }
+  ]
+}
