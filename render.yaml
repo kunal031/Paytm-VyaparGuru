@@ -31,8 +31,10 @@ services:
         value: https://vyaparguru-ml.onrender.com
       - key: CLIENT_URL
         value: https://vyaparguru-client.onrender.com
+      - key: SARVAM_API_KEY
+        sync: false # optional — powers the copilot LLM + translations when set
       - key: ANTHROPIC_API_KEY
-        sync: false # optional — photo/voice onboarding runs in demo mode without it
+        sync: false # optional — vision photo onboarding; copilot fallback provider
       - key: OPENAI_API_KEY
         sync: false # optional — Whisper STT runs in demo mode without it
 

@@ -1,4 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk';
+import { hasLlm, complete } from '@vyaparguru/agent/llm';
 import { logger } from '../utils/logger.js';
 
 const MODEL = 'claude-opus-5';
@@ -53,11 +54,12 @@ const DEMO_SHELF_ITEMS = [
  * the onboarding flow stays demoable.
  */
 export async function parseStockPhoto(imageBuffer, mimeType) {
+  // Photo parsing needs a vision model — Claude only (Sarvam is text-only)
   if (!process.env.ANTHROPIC_API_KEY) {
     logger.warn('ANTHROPIC_API_KEY not set — returning demo photo parse');
     return {
       source: 'demo-fallback',
-      note: 'No ANTHROPIC_API_KEY configured — these are sample items, not parsed from your photo.',
+      note: 'Photo parsing needs an ANTHROPIC_API_KEY (vision model) — these are sample items, not parsed from your photo.',
       items: DEMO_SHELF_ITEMS.map((i) => toSkuDraft(i, 'photo')),
     };
   }
@@ -113,13 +115,13 @@ Rules:
 - Translate product names to their common English brand form.
 - If nothing product-like is mentioned, return [].`;
 
-/** Structures a voice transcript into SKU drafts via Claude. */
+/** Structures a voice transcript into SKU drafts via the configured LLM (Sarvam or Claude). */
 export async function structureTranscript(transcript) {
-  if (!process.env.ANTHROPIC_API_KEY) {
-    logger.warn('ANTHROPIC_API_KEY not set — returning demo transcript parse');
+  if (!hasLlm()) {
+    logger.warn('No LLM API key set — returning demo transcript parse');
     return {
       source: 'demo-fallback',
-      note: 'No ANTHROPIC_API_KEY configured — these are sample items, not parsed from your voice note.',
+      note: 'No AI API key configured — these are sample items, not parsed from your voice note.',
       items: [
         { name: 'Parle-G Biscuit 250g', category: 'Snacks', priceINR: 30, quantity: 20, unit: 'pack' },
         { name: 'Thums Up 750ml', category: 'Beverages', priceINR: 45, quantity: 12, unit: 'bottle' },
@@ -127,27 +129,14 @@ export async function structureTranscript(transcript) {
     };
   }
 
-  const client = new Anthropic();
-  const response = await client.beta.messages.create({
-    model: MODEL,
-    max_tokens: 2048,
-    betas: ['server-side-fallback-2026-07-01'],
-    fallbacks: 'default',
+  const text = await complete({
     system: STRUCTURE_SYSTEM_PROMPT,
-    messages: [{ role: 'user', content: transcript }],
+    user: transcript,
+    maxTokens: 2048,
   });
-
-  if (response.stop_reason === 'refusal') {
-    throw new Error('The model declined to process this transcript.');
-  }
-
-  const text = response.content
-    .filter((b) => b.type === 'text')
-    .map((b) => b.text)
-    .join('');
   const items = extractJsonArray(text);
   return {
-    source: 'claude',
+    source: 'llm',
     note: null,
     items: items.map((i) => toSkuDraft(i, 'voice')),
   };

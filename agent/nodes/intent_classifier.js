@@ -43,7 +43,7 @@ export async function classifyIntent(state) {
         maxTokens: 16,
       })).toLowerCase().trim();
       if (INTENTS.includes(raw)) {
-        return { intent: raw, intentSource: 'claude' };
+        return { intent: raw, intentSource: 'llm' };
       }
     } catch {
       // fall through to rules

@@ -58,7 +58,7 @@ async function translateOut(state) {
   if (!hasLlm()) {
     return {
       translated: false,
-      answer: `${state.answer}\n\n(${language} replies need an ANTHROPIC_API_KEY — answering in English for now.)`,
+      answer: `${state.answer}\n\n(${language} replies need an AI API key configured — answering in English for now.)`,
     };
   }
   try {

@@ -32,7 +32,7 @@ function Bubble({ message }) {
         {message.text}
         {message.meta && (
           <p className="mt-1.5 text-[10px] uppercase tracking-wide text-slate-400">
-            {message.meta.intent} · {message.meta.answerSource === 'claude' ? 'Claude' : 'local'}
+            {message.meta.intent} · {message.meta.answerSource === 'llm' ? 'AI' : 'local'}
           </p>
         )}
       </div>

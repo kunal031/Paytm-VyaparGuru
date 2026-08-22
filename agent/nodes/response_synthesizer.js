@@ -7,6 +7,26 @@ const inr = (paise) => {
   return `₹${new Intl.NumberFormat('en-IN').format(Math.round(r))}`;
 };
 
+// Paise-valued fields in retrieved/analysis payloads. Converted to formatted ₹
+// strings BEFORE the LLM sees them — models must never do currency arithmetic.
+const MONEY_KEYS = new Set([
+  'revenue', 'amount', 'price', 'costPrice', 'estimatedLostRevenue',
+  'totalEstimatedLostRevenue', 'deadStockValue', 'projectedNet', 'yhat',
+  'yhatLower', 'yhatUpper', 'avgTicketRecent', 'avgTicketPrior', 'stockValue',
+  'dailyMeanRevenue', 'net', 'expenses', 'cogs', 'profit',
+]);
+
+function formatMoneyDeep(value, key) {
+  if (typeof value === 'number' && MONEY_KEYS.has(key)) return inr(value);
+  if (Array.isArray(value)) return value.map((v) => formatMoneyDeep(v, null));
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value).map(([k, v]) => [k, formatMoneyDeep(v, k)])
+    );
+  }
+  return value;
+}
+
 /** Template answers used when no ANTHROPIC_API_KEY is configured. */
 function templateAnswer(state) {
   const a = state.analysis || {};
@@ -108,12 +128,12 @@ export async function synthesizeResponse(state) {
         user: JSON.stringify({
           question: state.questionEnglish || state.question,
           intent: state.intent,
-          retrieved: state.retrieved,
-          analysis: state.analysis,
+          retrieved: formatMoneyDeep(state.retrieved, null),
+          analysis: formatMoneyDeep(state.analysis, null),
         }),
         maxTokens: 700,
       });
-      return { answer, answerSource: 'claude' };
+      return { answer, answerSource: 'llm' };
     } catch {
       // fall through to template
     }
