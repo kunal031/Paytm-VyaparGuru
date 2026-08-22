@@ -116,6 +116,17 @@ Free-tier note: services sleep after idle — the first request after a while ta
 - [x] **Phase 4** — Sales & Growth Copilot: LangGraph (JS) agent — translate → intent classification → tool-based data retrieval → code-only analysis → synthesis → translate back. Tools: getSalesByPeriod, getTopSKUs, getStockoutHistory, getDiscountImpact (+ inventory/forecast). Never fabricates numbers. Chat widget with voice input (Whisper), English/हिन्दी/తెలుగు selector, browser TTS. Runs without API keys via rule-based intents + template answers.
 - [x] **Phase 5** — Unified command-center dashboard (`/dashboard/summary` composes all three engines via `Promise.allSettled` — one failing engine degrades its card, never the page): today/week revenue with WoW delta, 30-day forecast + next festival, hidden-charges monthly cost, urgent stockout & dead-stock "needs attention" cards, 30-day revenue sparkline, best/worst seller, one-tap questions that deep-link into the Copilot. Error boundary around every page; skeleton loading states.
 
+## Integrations
+
+The 🔌 Integrations tab connects VyaparGuru to the other tools Indian SMBs already use — 12 providers across four categories:
+
+- **Khata & Udhaar**: KhataBook, OkCredit, Vyapar
+- **Accounting & ERP**: Zoho Books, Tally ERP, Marg ERP
+- **Online Commerce**: Shopify, WooCommerce, Amazon Seller, Flipkart Seller
+- **POS & Payments**: Petpooja, BharatPe
+
+How it works: every one of these apps exports CSV/Excel. Upload that export and the importer auto-detects the columns — provider-specific header maps first (KhataBook's *You Got / You Gave*, Tally's voucher types, Zoho's invoice columns…), fuzzy generic detection as fallback. Credits become `Transaction`s (`source: <provider>`), debits become `Expense`s, product catalogs upsert `SKU`s — so imported data immediately feeds Cash Flow, Inventory and the Copilot with zero extra plumbing. Handles ₹/comma amounts, multiple date formats, quoted CSV fields; unreadable rows are skipped and counted. Each provider also has a one-click **sample import** (clearly-labeled synthetic data in that provider's export format) so the whole connect → import → view flow is demoable. Live API/OAuth sync is the roadmap; file import works today.
+
 ## Demo script — the Ramesh story (~3 minutes)
 
 The seeded kirana merchant is built to tell a story. Log in as `ramesh@sharmastore.in` / `Paytm@123`:

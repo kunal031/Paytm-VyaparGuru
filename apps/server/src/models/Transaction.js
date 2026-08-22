@@ -12,6 +12,9 @@ const transactionSchema = new mongoose.Schema(
     // All monetary values stored as integer paise
     amount: { type: Number, required: true, min: 0 },
     paymentMode: { type: String, enum: PAYMENT_MODES, required: true },
+    // Where this transaction came from: 'paytm' (native) or an integration
+    // provider id like 'khatabook', 'zoho-books', ...
+    source: { type: String, default: 'paytm', index: true },
     timestamp: { type: Date, required: true, index: true },
     attributedSKUs: [
       {

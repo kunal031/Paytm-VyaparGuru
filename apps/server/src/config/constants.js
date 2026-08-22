@@ -1,10 +1,10 @@
 export const BUSINESS_TYPES = ['kirana', 'd2c', 'manufacturer'];
 
-export const PAYMENT_MODES = ['QR', 'Soundbox', 'Gateway', 'POS'];
+export const PAYMENT_MODES = ['QR', 'Soundbox', 'Gateway', 'POS', 'Imported'];
 
-export const SKU_CREATED_VIA = ['photo', 'voice', 'manual', 'seed'];
+export const SKU_CREATED_VIA = ['photo', 'voice', 'manual', 'seed', 'import'];
 
-export const EXPENSE_SOURCES = ['manual', 'auto-detected', 'seed'];
+export const EXPENSE_SOURCES = ['manual', 'auto-detected', 'seed', 'imported'];
 
 export const INSIGHT_TYPES = [
   'stockout_alert',

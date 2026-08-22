@@ -7,6 +7,7 @@ const navItems = [
   { to: '/cashflow', label: 'Cash Flow', icon: '💰' },
   { to: '/inventory', label: 'Inventory', icon: '📦' },
   { to: '/sales', label: 'Copilot', icon: '💬' },
+  { to: '/integrations', label: 'Integrations', icon: '🔌' },
 ];
 
 function NavItems({ vertical = false }) {
