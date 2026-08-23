@@ -8,6 +8,7 @@ import { useI18n } from '../i18n/LanguageContext.jsx';
 const NAV_ITEMS = [
   { to: '/dashboard', key: 'nav.home', icon: '🏠' },
   { to: '/billing', key: 'nav.billing', icon: '🧾' },
+  { to: '/customers', key: 'nav.customers', icon: '👤' },
   { to: '/cashflow', key: 'nav.cashflow', icon: '💰' },
   { to: '/inventory', key: 'nav.inventory', icon: '📦' },
   { to: '/sales', key: 'nav.copilot', icon: '💬' },

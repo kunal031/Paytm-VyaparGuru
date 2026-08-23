@@ -14,6 +14,9 @@ const MONEY_KEYS = new Set([
   'totalEstimatedLostRevenue', 'deadStockValue', 'projectedNet', 'yhat',
   'yhatLower', 'yhatUpper', 'avgTicketRecent', 'avgTicketPrior', 'stockValue',
   'dailyMeanRevenue', 'net', 'expenses', 'cogs', 'profit',
+  // customer & billing fields
+  'totalSpend', 'avgTicket', 'udhaarBalance', 'totalOutstandingUdhaar',
+  'grossSales', 'netCollected', 'udhaarGiven', 'khataReceived', 'refunds', 'subtotal',
 ]);
 
 function formatMoneyDeep(value, key) {
@@ -86,6 +89,23 @@ function templateAnswer(state) {
         (p) => `• ${p.name} (${p.category}) — ${inr(p.price)}, ${p.currentStock} ${p.unit}, added ${p.addedOn} via ${p.addedVia}`
       );
       return `Products you added recently:\n${lines.join('\n')}`;
+    }
+    case 'customers': {
+      const ci = r.customers;
+      if (!ci?.customers?.length) {
+        return 'No customer data yet — tag customers on bills at the Billing counter and I will start tracking regulars, VIPs and churn risk automatically.';
+      }
+      const top = ci.customers.slice(0, 3);
+      const seg = ci.summary.bySegment;
+      const lines = top.map(
+        (c, i) => `${i + 1}. ${c.name} — ${inr(c.totalSpend)} over ${c.visits} visits (${c.segment})`
+      );
+      const risk = (seg.at_risk || 0) + (seg.churned || 0);
+      return (
+        `Your top customers:\n${lines.join('\n')}\n\n` +
+        `${ci.summary.total} customers · ${ci.summary.repeatRate}% come back for repeat purchases.` +
+        (risk > 0 ? ` ⚠️ ${seg.at_risk || 0} at risk and ${seg.churned || 0} churned — check the Customers tab for the reasons.` : '')
+      );
     }
     case 'app_help':
       return (

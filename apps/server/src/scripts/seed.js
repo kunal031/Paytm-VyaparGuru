@@ -12,14 +12,109 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import bcrypt from 'bcryptjs';
+import mongoose from 'mongoose';
 import { connectDb, disconnectDb } from '../config/db.js';
 import { Merchant } from '../models/Merchant.js';
 import { SKU } from '../models/SKU.js';
 import { Transaction } from '../models/Transaction.js';
 import { Expense } from '../models/Expense.js';
 import { Insight } from '../models/Insight.js';
+import { Bill } from '../models/Bill.js';
+import { Customer } from '../models/Customer.js';
+import { KhataEntry } from '../models/KhataEntry.js';
+import { Counter } from '../models/Counter.js';
 import { logger } from '../utils/logger.js';
 import { BCRYPT_SALT_ROUNDS } from '../config/constants.js';
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+/**
+ * Plants demo customers with distinct, recognizable behaviour patterns for the
+ * kirana merchant so the Customers intelligence page tells a story on first
+ * open: a VIP, steady regulars, an at-risk lapser, a churned customer with an
+ * outstanding udhaar, and fresh walk-ins.
+ */
+async function seedDemoCustomers(merchant, skuDocs) {
+  const sku = (frag) => skuDocs.find((s) => s.name.includes(frag));
+  const basketOf = (frags) =>
+    frags
+      .map((f) => sku(f))
+      .filter(Boolean)
+      .map((s) => ({ skuId: s._id, name: s.name, quantity: 1 + (s.price < 5000 ? 1 : 0), unitPrice: s.price, total: 0 }));
+
+  // [name, phone, visit-days-ago list, basket, everyNthUdhaar]
+  const PERSONAS = [
+    ['Sunita Devi', '9811100001', [2, 6, 11, 16, 21, 27, 33, 39, 46, 52], ['Atta', 'Milk', 'Salt', 'Oil'], 0],
+    ['Rajesh Kumar', '9811100002', [4, 12, 19, 26, 34, 41, 49], ['Milk', 'Parle-G', 'Maggi'], 0],
+    ['Meena Ben', '9811100003', [7, 15, 23, 31, 40, 48], ['Surf Excel', 'Dettol', 'Colgate'], 3],
+    ['Iqbal Bhai', '9811100004', [30, 44, 58, 72], ['Thums Up', 'Bhujia'], 0], // at risk: cadence ~14d, absent 30d
+    ['Prakash Rao', '9811100005', [70, 84, 95], ['Tea', 'Salt', 'Parle-G'], 2], // churned + udhaar outstanding
+    ['Anita Sharma', '9811100006', [3], ['Muesli', 'Milk'], 0], // new walk-in
+    ['Vikram Singh', '9811100007', [9], ['Diya', 'Kaju Katli'], 0], // new
+  ];
+
+  const bills = [];
+  const khata = [];
+  const customersOut = [];
+  let seq = 0;
+
+  for (const [name, phone, daysAgo, basketFrags, udhaarEvery] of PERSONAS) {
+    const customer = await Customer.create({ merchantId: merchant._id, name, phone });
+    let balance = 0;
+    daysAgo
+      .sort((a, b) => b - a)
+      .forEach((d, idx) => {
+        seq += 1;
+        const items = basketOf(basketFrags).map((i) => ({ ...i, total: i.unitPrice * i.quantity }));
+        const total = items.reduce((a, i) => a + i.total, 0);
+        const isUdhaar = udhaarEvery > 0 && idx % udhaarEvery === udhaarEvery - 1;
+        const at = new Date(Date.now() - d * DAY_MS - 4 * 3600 * 1000);
+        const billId = new mongoose.Types.ObjectId();
+        bills.push({
+          _id: billId,
+          merchantId: merchant._id,
+          billNo: `INV-${String(seq).padStart(4, '0')}`,
+          items,
+          subtotal: total,
+          discount: 0,
+          total,
+          paymentMode: isUdhaar ? 'Udhaar' : ['Cash', 'QR'][idx % 2],
+          customerId: customer._id,
+          customerName: name,
+          status: isUdhaar ? 'udhaar' : 'paid',
+          returns: [],
+          billedBy: merchant.ownerName,
+          createdAt: at,
+          updatedAt: at,
+        });
+        if (isUdhaar) {
+          balance += total;
+          khata.push({
+            merchantId: merchant._id,
+            customerId: customer._id,
+            type: 'udhaar',
+            amount: total,
+            billId,
+            note: `INV-${String(seq).padStart(4, '0')}`,
+            createdAt: at,
+            updatedAt: at,
+          });
+        }
+      });
+    if (balance > 0) await Customer.updateOne({ _id: customer._id }, { $set: { udhaarBalance: balance } });
+    customersOut.push(customer);
+  }
+
+  // Bypass mongoose timestamps so bills keep their backdated createdAt
+  if (bills.length) await Bill.collection.insertMany(bills);
+  if (khata.length) await KhataEntry.collection.insertMany(khata);
+  await Counter.findOneAndUpdate(
+    { merchantId: merchant._id, name: 'bill' },
+    { $set: { seq } },
+    { upsert: true }
+  );
+  return { customers: customersOut.length, bills: bills.length };
+}
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const OUTPUT_DIR = path.join(__dirname, '..', '..', '..', '..', 'packages', 'data-simulator', 'output');
@@ -51,6 +146,10 @@ export async function seedFromSimulatorOutput() {
     Transaction.deleteMany({}),
     Expense.deleteMany({}),
     Insight.deleteMany({}),
+    Bill.deleteMany({}),
+    Customer.deleteMany({}),
+    KhataEntry.deleteMany({}),
+    Counter.deleteMany({}),
   ]);
 
   const passwordHash = await bcrypt.hash(DEMO_PASSWORD, BCRYPT_SALT_ROUNDS);
@@ -104,12 +203,19 @@ export async function seedFromSimulatorOutput() {
       }))
     );
 
+    // Demo customer story for the hero (kirana) merchant
+    let customerSeed = null;
+    if (data.merchant.businessType === 'kirana') {
+      customerSeed = await seedDemoCustomers(merchant, skuDocs);
+    }
+
     summary.push({
       merchant: merchant.businessName,
       email: merchant.email,
       skus: skuDocs.length,
       transactions: txnDocs.length,
       expenses: data.expenses.length,
+      ...(customerSeed ? { customers: customerSeed.customers, bills: customerSeed.bills } : {}),
     });
   }
 

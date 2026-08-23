@@ -137,6 +137,16 @@ Solves the daily-operations pain points directly:
 - **Khata (udhaar)**: customers with live balances; udhaar bills add to the balance, collecting a payment reduces it **and records the cash as revenue at that moment** — receivables never inflate cash flow.
 - **Sales register + Day close**: every bill by date, plus end-of-day reconciliation — gross sales, split by payment mode, udhaar given, khata received, refunds, and net actually collected.
 
+## Customer Intelligence (👤)
+
+Tag a customer on any bill at the counter (optional for paid bills, required for udhaar) and tracking is automatic:
+
+- **Segments, explainable**: 🆕 New · 🔁 Regular · 👑 VIP (top-quartile spend + frequent) · ⚠️ At-risk (absent > 2× their usual visiting cadence) · 💤 Churned (> 3× cadence or 60 days) — every label is derived from visible numbers, not a black box.
+- **Per-customer profile**: visits, spend, avg bill, visit cadence, favourite items (computed from their bills), full purchase history, khata entries.
+- **Churn signals**: "used to visit every ~14 days, absent 30", "last visit ended in a return", "favourite item is out of stock", "outstanding udhaar" — reasons the merchant can act on.
+- Summary: repeat rate, need-attention count, udhaar outstanding. The Copilot answers "who are my best customers / who is at risk?" from the same data.
+- The kirana demo seeds 7 customers with distinct planted patterns (a ₹5k VIP on a 6-day cadence, an at-risk lapser, a churned debtor…) so the page tells a story on first open.
+
 ## Multilingual, authorization & the voice assistant
 
 - **🌐 Universal language switcher** (header): the whole UI switches between 11 Indian languages — English, हिन्दी, বাংলা, తెలుగు, मराठी, தமிழ், ગુજરાતી, ಕನ್ನಡ, മലയാളം, ਪੰਜਾਬੀ, ଓଡ଼ିଆ. The client sends its string catalog to `/api/v1/i18n`; the server translates it via the LLM once per language and caches it (localStorage on the client too). The Copilot and voice assistant answer in the selected language.

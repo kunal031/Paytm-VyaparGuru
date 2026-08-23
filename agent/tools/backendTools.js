@@ -51,6 +51,11 @@ export async function getAllSkus(ctx) {
   return unwrap(await client(ctx).get('/inventory/skus'));
 }
 
+/** Customer intelligence: segments, spends, visit cadence, at-risk list. */
+export async function getCustomerInsights(ctx) {
+  return unwrap(await client(ctx).get('/customers/insights'));
+}
+
 /** 30-day cash flow forecast with festival annotations. */
 export async function getCashflowForecast(ctx, { days = 30 } = {}) {
   return unwrap(await client(ctx).get('/cashflow/forecast', { params: { days } }));

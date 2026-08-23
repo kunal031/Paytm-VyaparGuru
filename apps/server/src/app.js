@@ -14,6 +14,7 @@ import dashboardRoutes from './routes/dashboard.routes.js';
 import integrationsRoutes from './routes/integrations.routes.js';
 import i18nRoutes from './routes/i18n.routes.js';
 import billingRoutes from './routes/billing.routes.js';
+import customersRoutes from './routes/customers.routes.js';
 
 export function createApp() {
   const app = express();
@@ -35,6 +36,7 @@ export function createApp() {
   app.use('/api/v1/integrations', integrationsRoutes);
   app.use('/api/v1/i18n', i18nRoutes);
   app.use('/api/v1/billing', billingRoutes);
+  app.use('/api/v1/customers', customersRoutes);
 
   app.use(notFoundHandler);
   app.use(errorHandler);

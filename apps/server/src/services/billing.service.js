@@ -49,18 +49,19 @@ export async function createBill(merchantId, payload, billedBy) {
   const safeDiscount = Math.min(Math.max(0, Math.round(discount)), subtotal);
   const total = subtotal - safeDiscount;
 
-  // Udhaar bills need a customer on the khata
+  // Any bill may be tagged with a customer (that's what powers customer
+  // intelligence); udhaar bills REQUIRE one for the khata.
   let customer = null;
-  if (paymentMode === 'Udhaar') {
-    if (customerId) customer = await Customer.findOne({ _id: customerId, merchantId });
-    else if (customerName) {
-      customer = await Customer.findOneAndUpdate(
-        { merchantId, name: customerName.trim() },
-        { $setOnInsert: { merchantId, name: customerName.trim() } },
-        { upsert: true, new: true }
-      );
-    }
-    if (!customer) throw ApiError.badRequest('Udhaar bills need a customer (pick or add one)');
+  if (customerId) customer = await Customer.findOne({ _id: customerId, merchantId });
+  else if (customerName?.trim()) {
+    customer = await Customer.findOneAndUpdate(
+      { merchantId, name: customerName.trim() },
+      { $setOnInsert: { merchantId, name: customerName.trim() } },
+      { upsert: true, new: true }
+    );
+  }
+  if (paymentMode === 'Udhaar' && !customer) {
+    throw ApiError.badRequest('Udhaar bills need a customer (pick or add one)');
   }
 
   const seq = await Counter.next(merchantId, 'bill');

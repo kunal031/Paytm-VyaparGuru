@@ -6,6 +6,7 @@ import {
   getInventoryOverview,
   getCashflowForecast,
   getAllSkus,
+  getCustomerInsights,
 } from '../tools/backendTools.js';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -59,6 +60,9 @@ export async function retrieveData(state) {
       break;
     case 'new_products':
       await run('skus', () => getAllSkus(ctx));
+      break;
+    case 'customers':
+      await run('customers', () => getCustomerInsights(ctx));
       break;
     case 'stockout_history':
       await Promise.all([

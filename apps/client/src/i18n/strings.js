@@ -60,6 +60,19 @@ export const BASE_STRINGS = {
   'billing.khata': '📒 Khata',
   'nav.billing': 'Billing',
 
+  // Customers
+  'nav.customers': 'Customers',
+  'customers.title': 'Customer Intelligence',
+  'customers.subtitle': 'Tag customers on bills and VyaparGuru tracks regulars, VIPs, buying patterns and churn risk automatically.',
+  'customers.total': 'Customers',
+  'customers.repeatRate': 'Repeat Rate',
+  'customers.atRisk': 'Need Attention',
+  'customers.udhaarOut': 'Udhaar Outstanding',
+  'customers.info.total': 'Everyone who has been tagged on at least one bill. Tag customers at the Billing counter — tracking is automatic from there.',
+  'customers.info.repeatRate': 'The share of customers who came back for a second purchase. Rising repeat rate means your retention is working.',
+  'customers.info.atRisk': 'Customers absent much longer than their usual visiting rhythm (at-risk) or gone entirely (churned). Open a customer to see the likely reason.',
+  'customers.info.udhaarOut': 'Total credit currently outstanding across all khata customers.',
+
   // Assistant
   'assistant.title': 'VyaparGuru Assistant',
   'assistant.hint': 'Tap the mic and ask anything — your sales, stock, or how to use the app.',

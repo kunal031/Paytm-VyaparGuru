@@ -74,7 +74,7 @@ export default function BillCounter() {
         items: cart.map((c) => ({ skuId: c.skuId, name: c.name, quantity: c.quantity, unitPrice: c.unitPrice })),
         discount,
         paymentMode: mode,
-        customerName: mode === 'Udhaar' ? customerName.trim() : undefined,
+        customerName: customerName.trim() || undefined,
       });
       setInvoice(bill);
       setCart([]);
@@ -188,22 +188,26 @@ export default function BillCounter() {
           ))}
         </div>
 
-        {mode === 'Udhaar' && (
-          <div className="mt-2">
-            <input
-              value={customerName}
-              onChange={(e) => setCustomerName(e.target.value)}
-              list="khata-customers"
-              placeholder="Customer name (khata)"
-              className="w-full rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-sm focus:border-amber-500 focus:outline-none"
-            />
-            <datalist id="khata-customers">
-              {(customerData?.customers ?? []).map((c) => (
-                <option key={c._id} value={c.name} />
-              ))}
-            </datalist>
-          </div>
-        )}
+        {/* Tagging a customer (optional for paid bills, required for udhaar)
+            feeds the Customers intelligence page automatically */}
+        <div className="mt-2">
+          <input
+            value={customerName}
+            onChange={(e) => setCustomerName(e.target.value)}
+            list="khata-customers"
+            placeholder={mode === 'Udhaar' ? 'Customer name (required for udhaar)' : '👤 Customer (optional — enables tracking)'}
+            className={`w-full rounded-lg border px-3 py-2 text-sm focus:outline-none ${
+              mode === 'Udhaar'
+                ? 'border-amber-300 bg-amber-50 focus:border-amber-500'
+                : 'border-slate-300 focus:border-brand-blue'
+            }`}
+          />
+          <datalist id="khata-customers">
+            {(customerData?.customers ?? []).map((c) => (
+              <option key={c._id} value={c.name} />
+            ))}
+          </datalist>
+        </div>
 
         {error && <p className="mt-2 rounded-lg bg-red-50 px-3 py-2 text-xs text-red-700">{error}</p>}
 
