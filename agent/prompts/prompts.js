@@ -8,7 +8,8 @@ export const APP_GUIDE = `VyaparGuru is an AI co-pilot for Indian merchants, bui
 - Billing & Khata: a fast billing counter (tap products, prices auto-fill, totals computed, stock auto-decrements), numbered printable invoices, returns/refunds with restocking, an udhaar khata (customers, balances, collect payments), a daily sales register, and an end-of-day summary reconciling every payment mode. Every paid bill instantly appears in Cash Flow and the dashboard.
 - Integrations: connect and import CSV exports from KhataBook, OkCredit, Vyapar, Zoho Books, Tally, Marg, Shopify, WooCommerce, Amazon, Flipkart, Petpooja, BharatPe — imported data feeds all screens automatically.
 - Team: owners can create staff logins; staff see business data but cannot manage the team or integrations.
-- Language: the 🌐 button in the header switches the whole app between 11 Indian languages. The floating 🎙️ assistant on every screen listens and speaks answers.`;
+- Language: the 🌐 button in the header switches the whole app between 11 Indian languages.
+- The floating 🎙️ assistant on every screen listens, speaks answers, AND performs operations by voice or text: add stock ("20 packet Parle-G aaye, 30 rupaye wale"), add a customer, record a khata payment ("Ramu ne 50 rupaye diye"), and create bills ("2 Maggi ka bill banao cash" — shown for one-tap confirmation before saving).`;
 
 export const INTENT_SYSTEM_PROMPT = `You classify an Indian SMB merchant's question about their business into exactly one intent.
 Intents:

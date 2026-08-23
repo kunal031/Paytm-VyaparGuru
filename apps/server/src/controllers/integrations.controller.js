@@ -32,7 +32,14 @@ export const importData = asyncHandler(async (req, res) => {
   let csvText;
   let usedSample = false;
   if (req.file) {
-    csvText = req.file.buffer.toString('utf8');
+    // Most Indian business apps export Excel — convert to CSV transparently
+    if (/\.(xlsx|xls)$/i.test(req.file.originalname || '')) {
+      const XLSX = await import('xlsx');
+      const wb = XLSX.read(req.file.buffer, { type: 'buffer' });
+      csvText = XLSX.utils.sheet_to_csv(wb.Sheets[wb.SheetNames[0]]);
+    } else {
+      csvText = req.file.buffer.toString('utf8');
+    }
   } else if (req.body.sample === 'true' || req.body.sample === true) {
     csvText = generateSampleCsv(providerId, dataType);
     usedSample = true;

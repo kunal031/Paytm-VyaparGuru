@@ -18,7 +18,12 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
+      // Session died (e.g. dev server reseeded) — send the user back to login
+      // instead of leaving dead buttons everywhere
       useAuthStore.getState().logout();
+      if (!window.location.pathname.startsWith('/login')) {
+        window.location.assign('/login');
+      }
     }
     return Promise.reject(error);
   }

@@ -3,8 +3,10 @@ import { apiClient, apiRequest } from '../../services/apiClient.js';
 
 export function useAskCopilot() {
   return useMutation({
+    // The copilot page is Q&A-only (no confirm UI) — actions live in the
+    // floating assistant, which posts allowActions: true by default
     mutationFn: ({ question, language }) =>
-      apiRequest(apiClient.post('/sales/ask', { question, language }, { timeout: 120_000 })),
+      apiRequest(apiClient.post('/sales/ask', { question, language, allowActions: false }, { timeout: 120_000 })),
   });
 }
 

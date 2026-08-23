@@ -26,6 +26,7 @@
     "multer": "^2.2.0",
     "pino": "^9.3.0",
     "pino-http": "^10.2.0",
+    "xlsx": "^0.18.5",
     "zod": "^3.23.8"
   },
   "devDependencies": {

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { apiClient, apiRequest } from '../../services/apiClient.js';
 import { useI18n } from '../../i18n/LanguageContext.jsx';
 
@@ -9,6 +10,7 @@ import { useI18n } from '../../i18n/LanguageContext.jsx';
  */
 export default function FloatingAssistant() {
   const { t, lang, language } = useI18n();
+  const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [phase, setPhase] = useState('idle'); // idle | listening | thinking
   const [exchanges, setExchanges] = useState([]);
@@ -30,9 +32,44 @@ export default function FloatingAssistant() {
     window.speechSynthesis.speak(utterance);
   };
 
+  const refreshData = () => {
+    // Assistant actions touch inventory, billing, customers and the dashboard
+    ['inventory', 'billing', 'customers', 'dashboard', 'cashflow'].forEach((key) =>
+      qc.invalidateQueries({ queryKey: [key] })
+    );
+  };
+
   const pushAnswer = (question, data) => {
-    setExchanges((prev) => [...prev, { question, answer: data.answer, transcript: data.transcript }]);
+    setExchanges((prev) => [
+      ...prev,
+      { question, answer: data.answer, transcript: data.transcript, proposal: data.proposal ?? null },
+    ]);
     speakOut(data.answer);
+    if (data.executed) refreshData();
+  };
+
+  const confirmProposal = async (idx, proposal) => {
+    setPhase('thinking');
+    try {
+      if (proposal.kind === 'create_bill') {
+        const { bill } = await apiRequest(apiClient.post('/billing/bills', proposal.payload));
+        setExchanges((prev) =>
+          prev.map((x, i) => (i === idx ? { ...x, proposal: null } : x)).concat({
+            question: '✅ Confirm',
+            answer: `🧾 Bill ${bill.billNo} created — ₹${(bill.total / 100).toLocaleString('en-IN')} (${bill.paymentMode}). Find it in Billing → Register.`,
+          })
+        );
+        refreshData();
+      }
+    } catch (err) {
+      setExchanges((prev) => [...prev, { question: '✅ Confirm', answer: `⚠️ ${err.message}` }]);
+    } finally {
+      setPhase('idle');
+    }
+  };
+
+  const cancelProposal = (idx) => {
+    setExchanges((prev) => prev.map((x, i) => (i === idx ? { ...x, proposal: null } : x)));
   };
 
   const askText = async (question) => {
@@ -122,7 +159,13 @@ export default function FloatingAssistant() {
 
           <div ref={listRef} className="flex-1 space-y-3 overflow-y-auto p-3">
             {exchanges.length === 0 && (
-              <p className="rounded-xl bg-slate-50 p-3 text-xs text-slate-500">{t('assistant.hint')}</p>
+              <div className="rounded-xl bg-slate-50 p-3 text-xs text-slate-500">
+                <p>{t('assistant.hint')}</p>
+                <p className="mt-1.5 text-[11px] text-slate-400">
+                  Try: “20 packet Parle-G aaye, 30 rupaye wale” · “Ramu ne 50 rupaye diye” ·
+                  “2 Maggi ka bill banao” · “How were my sales?”
+                </p>
+              </div>
             )}
             {exchanges.map((x, i) => (
               <div key={i} className="space-y-1.5">
@@ -132,6 +175,23 @@ export default function FloatingAssistant() {
                 <p className="w-fit max-w-[90%] whitespace-pre-wrap rounded-xl rounded-bl-sm bg-slate-100 px-3 py-2 text-xs text-slate-800">
                   {x.answer}
                 </p>
+                {x.proposal && (
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => confirmProposal(i, x.proposal)}
+                      disabled={phase === 'thinking'}
+                      className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-emerald-700 disabled:opacity-50"
+                    >
+                      ✅ Confirm
+                    </button>
+                    <button
+                      onClick={() => cancelProposal(i)}
+                      className="rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-200"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                )}
               </div>
             ))}
             {phase === 'thinking' && (

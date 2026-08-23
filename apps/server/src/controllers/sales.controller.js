@@ -9,6 +9,7 @@ import {
 } from '../services/sales.service.js';
 import { askCopilot } from '../services/agent.service.js';
 import { transcribeAudio } from '../services/stt.service.js';
+import { tryHandleCommand } from '../services/assistant.service.js';
 
 // ---------- Data endpoints (also used as the copilot's tools) ----------
 
@@ -37,7 +38,15 @@ export const discountImpact = asyncHandler(async (req, res) => {
 const bearerToken = (req) => (req.headers.authorization || '').slice(7);
 
 export const ask = asyncHandler(async (req, res) => {
-  const { question, language = 'en' } = req.body;
+  const { question, language = 'en', allowActions = true } = req.body;
+  // Commands ("add 20 packets of Parle-G") execute; questions go to the copilot
+  if (allowActions !== false) {
+    const command = await tryHandleCommand(req.merchant._id, question);
+    if (command) {
+      ok(res, { ...command, intent: `action:${command.action}`, meta: { answerSource: 'action' } });
+      return;
+    }
+  }
   const result = await askCopilot({ question, language, authToken: bearerToken(req) });
   ok(res, result);
 });
@@ -51,6 +60,11 @@ export const askVoice = asyncHandler(async (req, res) => {
     req.file.originalname || 'question.webm',
     req.file.mimetype
   );
+  const command = await tryHandleCommand(req.merchant._id, transcript);
+  if (command) {
+    ok(res, { ...command, intent: `action:${command.action}`, meta: { answerSource: 'action' }, transcript, sttSource });
+    return;
+  }
   const result = await askCopilot({ question: transcript, language, authToken: bearerToken(req) });
   ok(res, { ...result, transcript, sttSource });
 });
