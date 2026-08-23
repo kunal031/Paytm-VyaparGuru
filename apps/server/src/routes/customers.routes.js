@@ -3,6 +3,7 @@ import { requireAuth } from '../middlewares/auth.middleware.js';
 import { ok } from '../utils/apiResponse.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { getCustomerInsights, getCustomerProfile } from '../services/customerInsights.service.js';
+import { generateReminder } from '../services/reminder.service.js';
 
 const router = Router();
 
@@ -19,6 +20,14 @@ router.get(
   '/:id/profile',
   asyncHandler(async (req, res) => {
     ok(res, await getCustomerProfile(req.merchant._id, req.params.id));
+  })
+);
+
+router.post(
+  '/:id/reminder',
+  asyncHandler(async (req, res) => {
+    const type = req.body.type === 'udhaar' ? 'udhaar' : 'winback';
+    ok(res, await generateReminder(req.merchant._id, req.params.id, { type, language: req.body.language || 'en' }));
   })
 );
 

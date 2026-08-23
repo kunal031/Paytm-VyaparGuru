@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import Card from '../components/common/Card.jsx';
 import Loader from '../components/common/Loader.jsx';
+import ReminderModal from '../components/customers/ReminderModal.jsx';
 import { apiClient, apiRequest } from '../services/apiClient.js';
 import { useI18n } from '../i18n/LanguageContext.jsx';
 import { formatPaise, formatDate } from '../utils/format.js';
@@ -25,6 +26,7 @@ export default function CustomersPage() {
   const [filter, setFilter] = useState('all');
   const [profile, setProfile] = useState(null);
   const [loadingProfile, setLoadingProfile] = useState(false);
+  const [reminder, setReminder] = useState(null); // {customerId, customerName, type}
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['customers', 'insights'],
@@ -188,6 +190,26 @@ export default function CustomersPage() {
               </div>
             )}
 
+            {/* WhatsApp actions */}
+            <div className="mt-3 flex gap-2">
+              {(profile.segment === 'at_risk' || profile.segment === 'churned' || profile.stats.daysSinceLastVisit > profile.stats.cadence * 2) && (
+                <button
+                  onClick={() => setReminder({ customerId: profile.customer._id, customerName: profile.customer.name, type: 'winback' })}
+                  className="flex-1 rounded-xl bg-[#25D366]/10 py-2 text-xs font-bold text-[#128C7E] hover:bg-[#25D366]/20"
+                >
+                  👋 WhatsApp: invite back
+                </button>
+              )}
+              {profile.customer.udhaarBalance > 0 && (
+                <button
+                  onClick={() => setReminder({ customerId: profile.customer._id, customerName: profile.customer.name, type: 'udhaar' })}
+                  className="flex-1 rounded-xl bg-[#25D366]/10 py-2 text-xs font-bold text-[#128C7E] hover:bg-[#25D366]/20"
+                >
+                  💰 WhatsApp: udhaar reminder
+                </button>
+              )}
+            </div>
+
             {profile.stats.favorites.length > 0 && (
               <div className="mt-3">
                 <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Usually buys</p>
@@ -222,6 +244,15 @@ export default function CustomersPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {reminder && (
+        <ReminderModal
+          customerId={reminder.customerId}
+          customerName={reminder.customerName}
+          type={reminder.type}
+          onClose={() => setReminder(null)}
+        />
       )}
     </div>
   );

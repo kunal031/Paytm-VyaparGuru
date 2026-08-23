@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Card from '../common/Card.jsx';
 import Loader from '../common/Loader.jsx';
+import ReminderModal from '../customers/ReminderModal.jsx';
 import {
   useCustomers,
   addCustomer,
@@ -19,6 +20,7 @@ export default function KhataTab() {
   const [paying, setPaying] = useState(null); // customer receiving a payment
   const [payINR, setPayINR] = useState('');
   const [detail, setDetail] = useState(null); // {customer, entries}
+  const [reminder, setReminder] = useState(null); // customer to WhatsApp
 
   const customers = data?.customers ?? [];
   const totalOutstanding = customers.reduce((a, c) => a + Math.max(0, c.udhaarBalance), 0);
@@ -126,6 +128,15 @@ export default function KhataTab() {
               >
                 📖 Khata
               </button>
+              {c.udhaarBalance > 0 && (
+                <button
+                  onClick={() => setReminder(c)}
+                  title="Send WhatsApp udhaar reminder"
+                  className="rounded-lg bg-[#25D366]/10 px-2.5 py-1.5 text-xs font-bold text-[#128C7E] hover:bg-[#25D366]/20"
+                >
+                  💬
+                </button>
+              )}
             </div>
           </div>
         ))}
@@ -135,6 +146,15 @@ export default function KhataTab() {
           </p>
         )}
       </div>
+
+      {reminder && (
+        <ReminderModal
+          customerId={reminder._id}
+          customerName={reminder.name}
+          type="udhaar"
+          onClose={() => setReminder(null)}
+        />
+      )}
 
       {/* Collect payment dialog */}
       {paying && (
