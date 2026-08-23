@@ -9,6 +9,7 @@ import InventoryPage from '../pages/InventoryPage.jsx';
 import SalesCopilotPage from '../pages/SalesCopilotPage.jsx';
 import IntegrationsPage from '../pages/IntegrationsPage.jsx';
 import TeamPage from '../pages/TeamPage.jsx';
+import BillingPage from '../pages/BillingPage.jsx';
 import NotFoundPage from '../pages/NotFoundPage.jsx';
 
 export default function AppRoutes() {
@@ -26,6 +27,7 @@ export default function AppRoutes() {
           <Route path="/sales" element={<SalesCopilotPage />} />
           <Route path="/integrations" element={<IntegrationsPage />} />
           <Route path="/team" element={<TeamPage />} />
+          <Route path="/billing" element={<BillingPage />} />
         </Route>
       </Route>
 

@@ -12,3 +12,19 @@
     @apply bg-slate-50 text-slate-900;
   }
 }
+
+/* Print only the invoice when the invoice modal is open */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #invoice-print,
+  #invoice-print * {
+    visibility: visible;
+  }
+  #invoice-print {
+    position: fixed;
+    inset: 0;
+    background: white;
+  }
+}

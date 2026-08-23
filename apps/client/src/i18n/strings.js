@@ -52,6 +52,14 @@ export const BASE_STRINGS = {
   'team.remove': 'Remove',
   'team.staffNote': 'You are signed in as staff — only the owner can manage the team.',
 
+  // Billing
+  'billing.title': 'Billing & Khata',
+  'billing.subtitle': 'Fast billing, printable invoices, returns, udhaar tracking and end-of-day reconciliation — all in one place.',
+  'billing.newBill': '🧾 New Bill',
+  'billing.register': '📋 Register',
+  'billing.khata': '📒 Khata',
+  'nav.billing': 'Billing',
+
   // Assistant
   'assistant.title': 'VyaparGuru Assistant',
   'assistant.hint': 'Tap the mic and ask anything — your sales, stock, or how to use the app.',

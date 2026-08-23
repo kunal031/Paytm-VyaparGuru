@@ -1,6 +1,8 @@
 export const BUSINESS_TYPES = ['kirana', 'd2c', 'manufacturer'];
 
-export const PAYMENT_MODES = ['QR', 'Soundbox', 'Gateway', 'POS', 'Imported'];
+export const PAYMENT_MODES = ['QR', 'Soundbox', 'Gateway', 'POS', 'Imported', 'Cash', 'Card', 'Udhaar'];
+
+export const BILL_PAYMENT_MODES = ['Cash', 'QR', 'Card', 'Udhaar'];
 
 export const SKU_CREATED_VIA = ['photo', 'voice', 'manual', 'seed', 'import'];
 
