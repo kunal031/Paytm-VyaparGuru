@@ -28,3 +28,10 @@
     background: white;
   }
 }
+
+/* Pitch deck slide entry */
+@keyframes pitch-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.pitch-slide { animation: pitch-in 0.45s ease-out; }

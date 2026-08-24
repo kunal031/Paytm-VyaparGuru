@@ -21,7 +21,7 @@ export default function ReminderModal({ customerId, customerName, type, onClose 
     (async () => {
       try {
         const data = await apiRequest(
-          apiClient.post(`/customers/${customerId}/reminder`, { type, language: lang }, { timeout: 60_000 })
+          apiClient.post(`/customers/${customerId}/reminder`, { type, language: lang }, { timeout: 180_000 })
         );
         if (!alive) return;
         setMessage(data.message);

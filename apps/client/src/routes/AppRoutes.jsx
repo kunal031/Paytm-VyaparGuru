@@ -12,12 +12,15 @@ import TeamPage from '../pages/TeamPage.jsx';
 import BillingPage from '../pages/BillingPage.jsx';
 import CustomersPage from '../pages/CustomersPage.jsx';
 import NotFoundPage from '../pages/NotFoundPage.jsx';
+import PitchPage from '../pages/PitchPage.jsx';
 
 export default function AppRoutes() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
+      {/* Hackathon presentation deck — static content, intentionally public */}
+      <Route path="/pitch" element={<PitchPage />} />
 
       <Route element={<ProtectedRoute />}>
         <Route element={<DashboardLayout />}>
